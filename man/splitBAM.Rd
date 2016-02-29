@@ -4,11 +4,11 @@
 \alias{splitBAM}
 \title{Filter a bam file by given criteria}
 \usage{
-splitBAM(bam, outfolder, splitby = "strand", chrnameList = NULL,
+splitBAM(bamFile, outfolder, splitby = "strand", chrnameList = NULL,
   flagList = NULL, mapqList = NULL, outfile_prefix, nthreads = 20)
 }
 \arguments{
-\item{bam}{Bam file path}
+\item{bamFile}{Bam file path}
 
 \item{outfolder}{Output folder path}
 

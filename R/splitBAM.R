@@ -2,7 +2,7 @@
 
 #' Filter a bam file by given criteria
 #'
-#' @param bam Bam file path
+#' @param bamFile Bam file path
 #' @param outfolder Output folder path
 #' @param splitby How to split the file ("strand","chr","flag","mapq")
 #' @param chrnameList list of Chromosomes to split by
@@ -19,7 +19,7 @@
 #' splitBAM(bam = "test.bam", outfolder = "test.out", splitby = "strand", chrnameList = NULL, flagList = NULL,
 #'              mapqList = NULL, outfile_prefix, nthreads = 20)
 
-splitBAM <- function(bam, outfolder, splitby = "strand", chrnameList = NULL, flagList = NULL,
+splitBAM <- function(bamFile, outfolder, splitby = "strand", chrnameList = NULL, flagList = NULL,
                      mapqList = NULL, outfile_prefix, nthreads = 20) {
 
         ## make filterRules (split by chr)
@@ -60,48 +60,53 @@ splitBAM <- function(bam, outfolder, splitby = "strand", chrnameList = NULL, fla
                 }
         }
 
-        ##     ---------------------------------------          ##
 
-        ## Make filter rule
-        make_FilterRules <- function(FilterFunc){
-                        return(S4Vectors::FilterRules(list(FilterFunc)) )
-        }
-
-        ## -------------  Apply filterrule as per the filter type ----------
+        ## -------------  Apply filter func as per the filter type --------- ##
 
         if(splitby == "chr"){
                 if(is.null(chrnameList)){
-                        print("Chrname not given for filtering. Splitting files by all chromosomes.")
-                        bam.dat = Rsamtools::scanBam(bam, param = ScanBamParam(what = "rname") )
+                        print("Chrname not given for filtering. Splitting file by all chromosomes.")
+                        bam.dat = Rsamtools::scanBam(bamFile, param = Rsamtools::ScanBamParam(what = "rname") )
                         chrnameList = unique(as.character(bam.dat[[1]]$rname))
                 }
-                filtfuncs <- lapply(chrnameList,make_FilterFunc)
+                filtfuncs <- lapply(chrnameList,make_FilterFunc_chr)
+                nameSuffix <- chrnameList
 
         } else if(splitby == "flag") {
                 if(is.null(flagList)){
                         stop("Provide flags to split by!")
                 } else {
                         filtfuncs <- lapply(flagList,make_FilterFunc_flag)
+                        nameSuffix <- flagList
                 }
 
         } else if(splitby == "strand") {
                 strandList <- c("+","-")
                 filtfuncs <- lapply(strandList,make_FilterFunc_strand)
+                nameSuffix <- c("plus","minus")
 
         } else if(splitby == "mapq") {
                 if(is.null(mapqList)){
                         stop("Provide at least one mapq cutoff!")
                 } else {
                         filtfuncs <- lapply(mapqList,make_FilterFunc_mapq)
+                        nameSuffix <- mapqList
                 }
 
         }
 
+        ##     ---------------------------------------          ##
+
+        ## Make filter rules
+        make_FilterRules <- function(FilterFunc){
+                return(S4Vectors::FilterRules(list(FilterFunc)) )
+        }
+        filtrules <- lapply(filtfuncs, make_FilterRules)
+
         ## Now filter
 
-        filtrules <- lapply(filtfuncs, make_FilterRules)
         message("Filtering the BAM file")
-        destinations <- paste0(outfile_prefix,"_", chrnameList,".bam")
+        destinations <- paste0(outfile_prefix,"_", nameSuffix,".bam")
 
         param = BiocParallel::MulticoreParam(workers = nthreads)
         BiocParallel::bplapply(seq_along(destinations), function(i, file, destinations, filtrules) {
