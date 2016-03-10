@@ -1,5 +1,5 @@
 
-#' plot the output of featureCounts summary
+#' Plot the output of featureCounts summary
 #'
 #' @param summaryFile featureCounts output.summary file
 #' @param CutFromHeader unnecessory text to remove from the header

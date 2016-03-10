@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotFeatureCount.R
 \name{plotFeatureCounts}
 \alias{plotFeatureCounts}
-\title{plot the output of featureCounts summary}
+\title{Plot the output of featureCounts summary}
 \usage{
 plotFeatureCounts(summaryFile, CutFromHeader, outFile)
 }
@@ -15,7 +15,7 @@ plotFeatureCounts(summaryFile, CutFromHeader, outFile)
 A plot of featurecounts summary in a pdf file
 }
 \description{
-plot the output of featureCounts summary
+Plot the output of featureCounts summary
 }
 \examples{
 plotFeatureCounts(test.summary,"/long/path/to/cut")
