@@ -1,6 +1,5 @@
 
-
-#' A Wrapper fr DESeq2 over featurecounts output
+#' A Wrapper for DESeq2 over featurecounts output
 #'
 #' @param fcountOutput featurecounts output (with control and test columns)
 #' @param numReplicates Number of replicates (could be an integer if the number is same for control and test,
