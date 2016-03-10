@@ -1,6 +1,6 @@
 
 
-#' A wrapper over SPIA pathway analysis for mouse and human
+#' A wrapper over SPIA pathway perturbation analysis for mouse and human
 #'
 #' @param DESeqOut Tab-seperated DESeq2 output
 #' @param organism select from "mmu" (mouse) or "hsa" (human)

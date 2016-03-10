@@ -19,7 +19,8 @@ annotate_DESeqOutput <- function(DESeqOutput, Output, remote = TRUE, genome = "h
         seqout <- read.delim(DESeqOutput,header = TRUE)
         if(remote == TRUE) {
                 genomes = data.frame(id = c("hg38","mm10","dm6"),
-                                     path = c("hsapiens_gene_ensembl","mmusculus_gene_ensembl",
+                                     path = c("hsapiens_gene_ensembl",
+                                              "mmusculus_gene_ensembl",
                                               "dmelanogaster_gene_ensembl"),
                                      stringsAsFactors = FALSE)
 
