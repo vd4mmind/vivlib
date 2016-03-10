@@ -4,15 +4,15 @@
 \alias{plotFeatureCounts}
 \title{plot the output of featureCounts summary}
 \usage{
-plotFeatureCounts(summaryFile, CutFromHeader)
+plotFeatureCounts(summaryFile, CutFromHeader, outFile)
 }
 \arguments{
-\item{summaryFile}{featureCounts output.summary}
+\item{summaryFile}{featureCounts output.summary file}
 
-\item{CutFromHeader}{Enter the long path that's present in featurecounts output to cut}
+\item{CutFromHeader}{unnecessory text to remove from the header}
 }
 \value{
-a plot
+A plot of featurecounts summary in a pdf file
 }
 \description{
 plot the output of featureCounts summary
