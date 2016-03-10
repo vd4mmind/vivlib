@@ -2,7 +2,7 @@
 
 #' A wrapper over SPIA pathway perturbation analysis for mouse and human
 #'
-#' @param DESeqOut Tab-seperated DESeq2 output
+#' @param DESeqOutput Tab-seperated DESeq2 output file
 #' @param organism select from "mmu" (mouse) or "hsa" (human)
 #' @param padjCutoff FDR cutoff for the genes to include in the list
 #' @param outFile output file to write affected pathways
@@ -14,8 +14,8 @@
 #' @examples
 #'
 #'
-spia_wrapper <- function(DESeqOut, organism = "mmu", padjCutoff, outFile, outPlot){
-        df <- read.table(DESeqOut, sep= "\t", header = TRUE, quote = "" )
+spia_wrapper <- function(DESeqOutput, organism = "mmu", padjCutoff, outFile, outPlot){
+        df <- read.table(DESeqOutput, sep= "\t", header = TRUE, quote = "" )
         # load corresponding lib
         orgmap <- data.frame(org = c("mmu","hsa"), db = c("org.Mm.eg.db","org.Hs.eg.db"),stringsAsFactors = FALSE)
         assertthat::assert_that(organism %in% orgmap$org)

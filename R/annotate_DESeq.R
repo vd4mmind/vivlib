@@ -1,7 +1,7 @@
 
 #' annotate DESeq Output file
 #'
-#' @param DESeqOutput tab seperated DESeq2 output file
+#' @param DESeqOutput Tab-seperated DESeq2 output file
 #' @param Output Annotated output file
 #' @param remote Whether use biomart to annotate file
 #' @param genome When remote = TRUE, which genome to use? (available = "hg38","mm10","dm6")
