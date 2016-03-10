@@ -2,19 +2,23 @@
 % Please edit documentation in R/DESeq2_wrapper.R
 \name{DESeq_wrapper}
 \alias{DESeq_wrapper}
-\title{A Wrapper fr DESeq2 over featurecounts output}
+\title{A Wrapper for DESeq2 over featurecounts output}
 \usage{
 DESeq_wrapper(fcountOutput, numReplicates = 4, fdr = 0.01,
-  Output = "deseq_output.tab", pdfReport = "deseq_report.pdf")
+  Output = "deseq_output.tab", col_order = 1,
+  pdfReport = "deseq_report.pdf")
 }
 \arguments{
 \item{fcountOutput}{featurecounts output (with control and test columns)}
 
-\item{numReplicates}{Number of replicates}
+\item{numReplicates}{Number of replicates (could be an integer if the number is same for control and test,
+or a vector with number of replicates for control and for test seperately)}
 
 \item{fdr}{fdr Cutoff}
 
 \item{Output}{Output tab seperated file}
+
+\item{col_order}{How are the columns arranged? (1 = control->test, 2 = test->control)}
 
 \item{pdfReport}{A report of processing}
 }
@@ -22,7 +26,7 @@ DESeq_wrapper(fcountOutput, numReplicates = 4, fdr = 0.01,
 Output file and Pdf Report of DESeq2 analysis
 }
 \description{
-A Wrapper fr DESeq2 over featurecounts output
+A Wrapper for DESeq2 over featurecounts output
 }
 \examples{
 DESeq_wrapper(fcountOutput = "test.out",numReplicates = 4, fdr = 0.01, Output = "deseq_output.tab",

@@ -8,7 +8,7 @@ annotate_DESeqOutput(DESeqOutput, Output, remote = TRUE, genome = "hg38",
   map_file)
 }
 \arguments{
-\item{DESeqOutput}{tab seperated DESeq2 output file}
+\item{DESeqOutput}{Tab-seperated DESeq2 output file}
 
 \item{Output}{Annotated output file}
 

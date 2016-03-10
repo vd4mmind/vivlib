@@ -2,12 +2,12 @@
 % Please edit documentation in R/spia_wrapper.R
 \name{spia_wrapper}
 \alias{spia_wrapper}
-\title{A wrapper over SPIA pathway analysis for mouse and human}
+\title{A wrapper over SPIA pathway perturbation analysis for mouse and human}
 \usage{
-spia_wrapper(DESeqOut, organism = "mmu", padjCutoff, outFile, outPlot)
+spia_wrapper(DESeqOutput, organism = "mmu", padjCutoff, outFile, outPlot)
 }
 \arguments{
-\item{DESeqOut}{Tab-seperated DESeq2 output}
+\item{DESeqOutput}{Tab-seperated DESeq2 output file}
 
 \item{organism}{select from "mmu" (mouse) or "hsa" (human)}
 
@@ -21,7 +21,7 @@ spia_wrapper(DESeqOut, organism = "mmu", padjCutoff, outFile, outPlot)
 a txt file and a pdf file
 }
 \description{
-A wrapper over SPIA pathway analysis for mouse and human
+A wrapper over SPIA pathway perturbation analysis for mouse and human
 }
 \examples{
 
