@@ -7,7 +7,7 @@ Depends:
     R (>= 3.2.2)
 Imports:
         dplyr, assertthat, ggplot2, tidyr, pheatmap, reshape2, calibrate, gplots,
-        biomaRt, DESeq2, limma,  GenomicFeatures, S4Vectors, BiocParallel, Rsamtools, spia
+        biomaRt, DESeq2, limma,  GenomicFeatures, S4Vectors, BiocParallel, Rsamtools, SPIA
 Suggests:
         edgeR
 License: GPLv3

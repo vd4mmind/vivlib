@@ -1,30 +1,56 @@
 
-# The script can be used to compare a count dataset to online microarrary datasets, 
-# with columns "gname/SPOTID" (for gene name) & "adj.P.Val". 
+# The script can be used to compare a count dataset to online microarrary datasets,
+# with columns "gname/SPOTID" (for gene name) & "adj.P.Val".
 # Author: Vivek Bhardwaj (bhardwaj@ie-freiburg.mpg.de) (11/06/2015)
 
 library(limma)
 library(gplots)
 
+#' Make Voom transformed input for BarCodePlot and ROAST test
+#'
+#' @param counts A tab-seperated file containing gene names followed by counts
+#' @param design A tab-seperated file containing design information (colnames, condition).
+#'                      colnames should correspond to columns in count file and condition could be
+#'                      control/test or any set of factors.
+#' @param bmGeneNames Optionally provide alternative gene symbols downloaded from biomart as a
+#'                      tab-seperated file. The columns should be ("ensembl_gene_id","external_gene_id")
+#' @param name File name to output filtering plots.
+#'
+#' @return A plot (as pdf) and a voom transformed output as list.
+#' @export
+#'
+#' @examples
+#'makeVoomInput(counts,design,bmGeneNames,name="name")
+#'
+
 makeVoomInput <- function(counts,design,bmGeneNames,name="name"){
-  design <- read.table(design, header=T)
-  design <- model.matrix(~ condition, design)
-  counts <- read.table(counts, header = T)
+
+  # get gene count data
+  counts <- read.table(counts, header = T, row.names = 1)
   rownames(counts) = gsub('(ENS.*)\\.[0-9]*','\\1',rownames(counts))
+  # filter by rowmean
   means = rowMeans(counts)
   counts = counts[which(means > 1),]
+
+  # add gene names from biomart file
   bmGeneNames = read.table(bmGeneNames,sep="\t", header=TRUE, row.names=1)
   matchingIds = merge(counts, bmGeneNames,
                       by.x = 0,
                       by.y = "ensembl_gene_id",
                       all.x = TRUE)
   matchingIds = matchingIds[c("Row.names","external_gene_id")]
-  y <- voom(counts,design)
+
+  # get design matrix for voom
+  design <- read.table(design, header=T)
+  design <- model.matrix(~ condition, design)
+
+  # voom
+  y <- limma::voom(counts,design)
   y$Gene = tolower(as.character(matchingIds$external_gene_id))
-  fit <- lmFit(y, design = design)
-  fit <- eBayes(fit)
-  voomInput <- list(y = y, fit = fit)
-  
+  fit <- limma::lmFit(y, design = design)
+  fit <- limma::eBayes(fit)
+  voomOutput <- list(y = y, fit = fit)
+
   # make plots of filtering
   pdf(paste0(name,"filtering_plots.pdf"))
   boxplot(log2(counts),notch = TRUE,col="steelblue",cex.names=0.5,main="Log Counts after filtering")
@@ -32,98 +58,161 @@ makeVoomInput <- function(counts,design,bmGeneNames,name="name"){
   hist(fit$t[,"conditiontreatment"],col="steelblue",xlab="Range of test-statistic",
        main="Distribution of test statistics post-filtering")
   dev.off()
-  
-  return(voomInput)
+
+  return(voomOutput)
 }
 
 
-plotBarCodes <- function(GSEfile,ourVoomFile,batchAnalyse=TRUE,isHuman=FALSE,name=NULL,
+#' Perform ROAST and make BarCodePlot using a voom transformed output and a microarry output
+#'
+#' @description This function was originally written for comparing a  voom-transformed mouse input
+#' and a microarry (affy) input from human or mouse. That's why the option to provide a Human-Mouse ID map.
+#' But if you don't want that, you can simply use it to compare any set of microarry outputs to any voom-transformed input.
+#'
+#' @param GSEfile A microarry data file (name should start from 'GSE')
+#' @param ourVoomFile Voom transformed output from \code{\link{makeVoomInput}}
+#' @param batchAnalyse If there are multiple microarry files in the folder, give the folder path.
+#' @param VoomInputName Provide a name for our Voom-transformed input data.
+#' @param humanMouseNameMap A tab-seperated file with column ("Sym_Human") which provides alternative
+#'                      human symbol for our mouse gene IDs
+#' @param dfCutoff Which cutoff to use for filtering genes from GSEfile.
+#'                      Default is by pvalue. Otherwise a log Fold Change cutoff can be used.
+#' @param logFoldCh logFoldChange cutoff for filtering GSE file (if used)
+#' @param padj adjusted p-value cutoff for filtering GSE file (if used)
+#' @param outFolder Folder to write the output pdf file.
+#'
+#' @return Pdf file with barcode plots
+#' @export
+#'
+#' @examples
+#'plotBarCodes(GSEfile,ourVoomFile)
+#'
+
+plotBarCodes <- function(GSEfile,ourVoomFile, batchAnalyse=TRUE, VoomInputName=NULL,
                          humanMouseNameMap = "/data/akhtar/bhardwaj/my_annotations/Human_mouse_Gene_orthologous.txt",
                          dfCutoff="pvalue",logFoldCh = 0, padj = 0.05,
-                         outFolder="/data/akhtar/bhardwaj/2015_OtherAnalysis/Bilal_Oncogene_paper/BarCodePlots/MPC5"){
-                         
-  if(batchAnalyse == FALSE){
-    GSE_files <- GSEfile
-  } else {
-    GSE_files <- list.files(path=GSEfile,pattern="GSE")
-  }
+                         outFolder="/data/akhtar/bhardwaj/2015_OtherAnalysis/Bilal_Oncogene_paper/BarCodePlots/MPC5") {
+
+        # one file or many?
+        if(batchAnalyse == FALSE) {
+                GSE_files <- GSEfile
+                } else {
+                        GSE_files <- list.files(path=GSEfile,pattern="GSE")
+                }
+
   # seperate matrix and fit inputs
   y = ourVoomFile$y
   fit = ourVoomFile$fit
-    
+
   for (d in GSE_files){
     GSEname = gsub('.*(GSE.*).txt','\\1',d)
-        print(paste(name,"vs",GSEname))
+        print(paste(VoomInputName,"vs",GSEname))
+
         ## parse GSE data files
         GSE_df <- read.table(d, header=T)
         colnames(GSE_df) <- gsub('SPOT_ID','gname',colnames(GSE_df))
         GSE_df$gname <-tolower(GSE_df$gname)
-        
+
         if(dfCutoff== "pvalue"){
           ## take only UPs and Downs from Online Data
-          print(paste0("Filtering by P-value:",padj," and logFC : ", logFoldCh))
+          print(paste0("Filtering by P-value:",padj))
           GSE_df <- subset(GSE_df, adj.P.Val < padj)
+
           GSE_df <- aggregate(logFC ~ gname, data=GSE_df, FUN=mean)
           GSE_df[which(GSE_df$logFC < 0),2] <- -1
           GSE_df[which(GSE_df$logFC > 0),2] <- 1
-          
+
         } else {
-          print(paste0("Filtering only by logFC : +- ", logFoldCh))
+          print(paste0("Filtering by logFC : +- ", logFoldCh))
           GSE_df <- aggregate(logFC ~ gname, data=GSE_df, FUN=mean)
           GSE_df <- subset(GSE_df,abs(logFC) > logFoldCh)
+
           GSE_df[which(GSE_df$logFC < 0),2] <- -1
           GSE_df[which(GSE_df$logFC > 0),2] <- 1
         }
-        
-        print(paste0("No. of diffExp genes in sample:",d," = ",nrow(GSE_df)))
-           
-        if(isHuman == TRUE){ # convert human gene names to mouse
+
+        print(paste0("No. of selected genes in sample:",d," = ",nrow(GSE_df)))
+
+        if(!is.null(humanMouseNameMap)){ # convert human gene names to mouse
           print("Converting Human IDs to mouse")
           geneMap <- read.table(humanMouseNameMap,sep="\t",header=T)
+
           geneMap$Sym_Human = tolower(geneMap$Sym_Human)
           GSE_df = merge(GSE_df,geneMap,by.x = "gname",by.y = "Sym_Human",all.x = TRUE)
         }
-        
+
+        # match our Gene names to the gene names in the GSE datasets
         GSE_df$gname = tolower(as.character(GSE_df$gname))
-        GSE_df$idx <- match(GSE_df$gname, y$Gene)## match our Gene names to the gene names in the GSE datasets
-        GSE_df <- na.omit(GSE_df)## remove NAs
-        
+        GSE_df$idx <- match(GSE_df$gname, y$Gene)
+        GSE_df <- na.omit(GSE_df) # remove NAs
+
         print("Running Test and making plots")
-        pdf(file = paste0(outFolder,"/",GSEname,"_vs_",name, ".pdf"), width = 6, height = 6)
+        pdf(file = paste0(outFolder,"/",GSEname,"_vs_",VoomInputName, ".pdf"), width = 6, height = 6)
+
         ## the stats[index] is based on the gene symbol
         barcodeplot(statistics = fit$t[,"conditiontreatment"],index = GSE_df$idx[GSE_df$logFC > 0],
-                                 index2 = GSE_df$idx[GSE_df$logFC < 0],main = (paste(GSEname," vs ",name)))
-        ## Add testScores
+                                 index2 = GSE_df$idx[GSE_df$logFC < 0], main = (paste(GSEname," vs ",VoomInputName))
+                    )
+
+        ## Do roast and add testScores
         testRes <- roast(index = GSE_df$idx, y = y, design = y$design,contrast = 2,
                                    nrot = 9999, gene.weights = GSE_df$logFC)
         textplot(as.data.frame(testRes),cex=0.5,col.colnames="steelblue",col.rownames = "red")
+
         dev.off()
       }
-  }  
+  }
 
 
+
+#' A wrapper over CAMERA test.
+#'
+#' @param counts A tab-seperated file containing gene names followed by counts
+#' @param design  A tab-seperated file containing design information (colnames, condition).
+#'                      colnames should correspond to columns in count file and condition could be
+#'                      control/test or any set of factors.
+#' @param bmGeneNames Optionally provide alternative gene symbols downloaded from biomart as a
+#'                      tab-seperated file. The columns should be ("ensembl_gene_id","external_gene_id")
+#' @param name File name to output filtering plots.
+#' @param moduleFile A file with modules to test.
+#'
+#' @return CAMERA result object.
+#' @export
+#'
+#' @examples
+#'runCamera(counts,design,bmGeneNames,name="name",moduleFile="msigdb.v5.0.symbols.gmt")
+#'
 
 runCamera <- function(counts,design,bmGeneNames,name="name",moduleFile="msigdb.v5.0.symbols.gmt"){
+
         design <- read.table(design, header=T)
         design <- model.matrix(~ condition, design)
-        counts <- read.table(counts, header = T)
+
+        # get count data and filter by rowmeans
+        counts <- read.table(counts, header = T, row.names = 1)
         rownames(counts) = gsub('(ENS.*)\\.[0-9]*','\\1',rownames(counts))
         means = rowMeans(counts)
         counts = counts[which(means > 1),]
+
+        # add gene names from biomart file
         bmGeneNames = read.table(bmGeneNames,sep="\t", header=TRUE, row.names=1)
         matchingIds = merge(counts, bmGeneNames,
                             by.x = 0,
                             by.y = "ensembl_gene_id",
                             all.x = TRUE)
         matchingIds = matchingIds[c("Row.names","external_gene_id")]
+
+        # voom transform
         y <- voom(counts,design)
         y$Gene = tolower(as.character(matchingIds$external_gene_id))
         fit <- lmFit(y, design = design)
+
         fit$df.residual <- fit$df.residual - 1 # for CAMERA
         fit <- eBayes(fit,trend = T) # for CAMERA
         fit$gene = tolower(as.character(matchingIds$external_gene_id))
         print(summary(decideTests(fit)))
-        # read and prepare ModuleFile
+
+        # read and prepare the ModuleFile
         Mods <- read.table(moduleFile,fill = TRUE, sep="\t")
         Mods <- Mods[,c(1,3:length(Mods))]
         nams <- Mods[,1]
@@ -132,15 +221,16 @@ runCamera <- function(counts,design,bmGeneNames,name="name",moduleFile="msigdb.v
         ldat <- lapply(ldat,function(x) x[x != ""])
         names(ldat) <- nams
         ldat <- lapply(ldat,tolower)
+
+        # Run CAMERA and print output
         index <- symbols2indices(ldat,fit$gene,remove.empty = TRUE)
-        # Run CAMERA
-        gst<-camera(index = index,y = y$E,design = design,allow.neg.cor=FALSE)
-        gst<-gst[order(gst[,5],decreasing = FALSE),]
-        
+        gst <- camera(index = index,y = y$E,design = design,allow.neg.cor=FALSE)
+        gst <- gst[order(gst[,5],decreasing = FALSE),]
+
         print("No of Significant modules : ")
-        print(table(gst[,5]<0.05))
+        print(table(gst[,5] < 0.05))
         print("List of significant modules : ")
         print(gst[which(gst$FDR < 0.05),])
-        
+        # return camera output object
         return(gst)
 }
