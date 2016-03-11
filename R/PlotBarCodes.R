@@ -1,11 +1,4 @@
 
-# The script can be used to compare a count dataset to online microarrary datasets,
-# with columns "gname/SPOTID" (for gene name) & "adj.P.Val".
-# Author: Vivek Bhardwaj (bhardwaj@ie-freiburg.mpg.de) (11/06/2015)
-
-library(limma)
-library(gplots)
-
 #' Make Voom transformed input for BarCodePlot and ROAST test
 #'
 #' @param counts A tab-seperated file containing gene names followed by counts
@@ -69,7 +62,8 @@ makeVoomInput <- function(counts,design,bmGeneNames,name="name"){
 #' and a microarry (affy) input from human or mouse. That's why the option to provide a Human-Mouse ID map.
 #' But if you don't want that, you can simply use it to compare any set of microarry outputs to any voom-transformed input.
 #'
-#' @param GSEfile A microarry data file (name should start from 'GSE')
+#' @param GSEfile A microarry data file. Filename should start from 'GSE'.
+#'              The columns should have 'gname' and 'SPOT_ID'.
 #' @param ourVoomFile Voom transformed output from \code{\link{makeVoomInput}}
 #' @param batchAnalyse If there are multiple microarry files in the folder, give the folder path.
 #' @param VoomInputName Provide a name for our Voom-transformed input data.
@@ -162,75 +156,3 @@ plotBarCodes <- function(GSEfile,ourVoomFile, batchAnalyse=TRUE, VoomInputName=N
         dev.off()
       }
   }
-
-
-
-#' A wrapper over CAMERA test.
-#'
-#' @param counts A tab-seperated file containing gene names followed by counts
-#' @param design  A tab-seperated file containing design information (colnames, condition).
-#'                      colnames should correspond to columns in count file and condition could be
-#'                      control/test or any set of factors.
-#' @param bmGeneNames Optionally provide alternative gene symbols downloaded from biomart as a
-#'                      tab-seperated file. The columns should be ("ensembl_gene_id","external_gene_id")
-#' @param name File name to output filtering plots.
-#' @param moduleFile A file with modules to test.
-#'
-#' @return CAMERA result object.
-#' @export
-#'
-#' @examples
-#'runCamera(counts,design,bmGeneNames,name="name",moduleFile="msigdb.v5.0.symbols.gmt")
-#'
-
-runCamera <- function(counts,design,bmGeneNames,name="name",moduleFile="msigdb.v5.0.symbols.gmt"){
-
-        design <- read.table(design, header=T)
-        design <- model.matrix(~ condition, design)
-
-        # get count data and filter by rowmeans
-        counts <- read.table(counts, header = T, row.names = 1)
-        rownames(counts) = gsub('(ENS.*)\\.[0-9]*','\\1',rownames(counts))
-        means = rowMeans(counts)
-        counts = counts[which(means > 1),]
-
-        # add gene names from biomart file
-        bmGeneNames = read.table(bmGeneNames,sep="\t", header=TRUE, row.names=1)
-        matchingIds = merge(counts, bmGeneNames,
-                            by.x = 0,
-                            by.y = "ensembl_gene_id",
-                            all.x = TRUE)
-        matchingIds = matchingIds[c("Row.names","external_gene_id")]
-
-        # voom transform
-        y <- voom(counts,design)
-        y$Gene = tolower(as.character(matchingIds$external_gene_id))
-        fit <- lmFit(y, design = design)
-
-        fit$df.residual <- fit$df.residual - 1 # for CAMERA
-        fit <- eBayes(fit,trend = T) # for CAMERA
-        fit$gene = tolower(as.character(matchingIds$external_gene_id))
-        print(summary(decideTests(fit)))
-
-        # read and prepare the ModuleFile
-        Mods <- read.table(moduleFile,fill = TRUE, sep="\t")
-        Mods <- Mods[,c(1,3:length(Mods))]
-        nams <- Mods[,1]
-        dat <- Mods[,-1]
-        ldat <- split(dat,seq_len(nrow(dat)))
-        ldat <- lapply(ldat,function(x) x[x != ""])
-        names(ldat) <- nams
-        ldat <- lapply(ldat,tolower)
-
-        # Run CAMERA and print output
-        index <- symbols2indices(ldat,fit$gene,remove.empty = TRUE)
-        gst <- camera(index = index,y = y$E,design = design,allow.neg.cor=FALSE)
-        gst <- gst[order(gst[,5],decreasing = FALSE),]
-
-        print("No of Significant modules : ")
-        print(table(gst[,5] < 0.05))
-        print("List of significant modules : ")
-        print(gst[which(gst$FDR < 0.05),])
-        # return camera output object
-        return(gst)
-}

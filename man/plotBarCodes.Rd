@@ -11,7 +11,8 @@ plotBarCodes(GSEfile, ourVoomFile, batchAnalyse = TRUE,
   outFolder = "/data/akhtar/bhardwaj/2015_OtherAnalysis/Bilal_Oncogene_paper/BarCodePlots/MPC5")
 }
 \arguments{
-\item{GSEfile}{A microarry data file (name should start from 'GSE')}
+\item{GSEfile}{A microarry data file. Filename should start from 'GSE'.
+The columns should have 'gname' and 'SPOT_ID'.}
 
 \item{ourVoomFile}{Voom transformed output from \code{\link{makeVoomInput}}}
 
