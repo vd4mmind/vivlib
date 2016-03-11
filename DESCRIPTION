@@ -1,10 +1,15 @@
 Package: vivlib
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Title: An R package for useful wrappers
+Version: 0.0.1
+Authors@R: person("Vivek", "Bhardwaj", email = "bhardwaj@ie-freiburg.mpg.de", role = c("aut", "cre"))
+Description: An R package for useful wrappers the are used quite often by me (vivekbhr) for my analysis.
 Depends:
     R (>= 3.2.2)
-License: What license is it under?
+Imports:
+        dplyr, assertthat, ggplot2, tidyr, pheatmap, reshape2, calibrate, gplots,
+        biomaRt, DESeq2, limma,  GenomicFeatures, S4Vectors, BiocParallel, Rsamtools, spia
+Suggests:
+        edgeR
+License: GPLv3
 LazyData: true
 RoxygenNote: 5.0.1
