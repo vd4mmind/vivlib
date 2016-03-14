@@ -1,15 +1,17 @@
 Package: vivlib
-Title: An R package for useful wrappers
+Title: An R package for useful bioinformatics wrappers
 Version: 0.0.1
-Authors@R: person("Vivek", "Bhardwaj", email = "bhardwaj@ie-freiburg.mpg.de", role = c("aut", "cre"))
+Author: Vivek Bhardwaj, <bhardwaj@ie-freiburg.mpg.de>
+Maintainer: Vivek Bhardwaj, <bhardwaj@ie-freiburg.mpg.de>
 Description: An R package for useful wrappers the are used quite often by me (vivekbhr) for my analysis.
 Depends:
     R (>= 3.2.2)
 Imports:
-        dplyr, assertthat, ggplot2, tidyr, pheatmap, reshape2, calibrate, gplots
-biocViews: biomaRt, DESeq2, limma,  GenomicFeatures, S4Vectors, BiocParallel, Rsamtools, SPIA
+        dplyr, assertthat, ggplot2, tidyr, pheatmap, reshape2, calibrate, gplots,
+        biomaRt, DESeq2, limma,  GenomicFeatures, S4Vectors, BiocParallel, Rsamtools, SPIA
 Suggests:
         edgeR
+biocViews: wrappers, rnaseq,  Visualization
 License: GPLv3
 LazyData: true
 RoxygenNote: 5.0.1
