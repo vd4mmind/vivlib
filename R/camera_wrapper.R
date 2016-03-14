@@ -96,9 +96,11 @@ Camera_plotbubble <- function(CAMERAoutput, outfileName, top = 20, title = NULL)
 
         # plot and save
         p <- ggplot(camtop,aes(Correlation, FDR, fill = Direction, size = NGenes, label = Pname)) +
-                geom_point(alpha=0.7,shape=21) + geom_text(size=4) +
-                scale_size_area(max_size = 15) + theme_bw(base_size = 15) +
-                labs(x = "Inter-gene Correlation", y = "-log10(p-value)",fill="Category")
+                ggplot2::geom_point(alpha=0.7,shape=21) +
+                ggplot2::geom_text(size=4) +
+                ggplot2::scale_size_area(max_size = 15) +
+                ggplot2::theme_bw(base_size = 15) +
+                ggplot2::labs(x = "Inter-gene Correlation", y = "-log10(p-value)",fill="Category")
         if (!is.null(title)) {
                 p <- p + ggplot2::ggtitle(title)
         }
