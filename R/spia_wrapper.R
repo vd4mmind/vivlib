@@ -54,25 +54,42 @@ spia_wrapper <- function(DESeqOutput, organism = "mmu", padjCutoff, outFile, out
 #' @param title Title of the plot
 #'
 #' @return plot A bubbleplot in pdf format
+#' @import ggplot2
 #' @export
 #'
 #' @examples
 #' spia_plotBubble(spia_wrapper_output, outfileName = "test.out, top = 20, title = "test plot)
 #'
 
-spia_plotBubble <- function(SPIAout,outfileName, top = 20, title = NULL){
-        path <- read.delim(pipe(paste0("cut -f1,3,9,11 ",SPIAout)), header = TRUE)
+spia_plotBubble <- function(SPIAout,outfileName, top = 20, plotType = 1, title = NULL){
+        path <- read.delim(pipe(paste0("cut -f1,3,6,9,11 ",SPIAout)), header = TRUE)
         path$pGFdr <- -log10(path$pGFdr)
         path <- path[order(path$pGFdr,decreasing = TRUE),]
         path <- path[1:top,]
 
+        func <- function(path){
+                p <- ggplot(path,aes(Name,pGFdr,fill = Status, size = pSize, label = Name)) +
+                geom_point(alpha = 0.7, shape = 21) +
+                scale_size_area(max_size = 15) + theme_bw(base_size = 15) +
+                theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
+                scale_fill_manual(values = c("forestgreen","Red")) +
+                labs(x = "Pathways", y = "-log10(p-value)",fill = "Status", title = title)
+
+                return(p)
+        }
+
+        if(plotType == 1) {
+                p <- func(path)
+        } else {
+                warning("The scale of p-value has been converted to negative for inhibited pathways")
+                path[path$Status == "Inhibited",'pGFdr'] = -path[path$Status == "Inhibited",'pGFdr']
+                p <- func(path)
+                p <- p + coord_cartesian() + theme(axis.text.x = element_blank()) +
+                        geom_hline(aes(yintercept=0)) +
+                        geom_text(size = 4,check_overlap = TRUE, angle = 10, nudge_y = -1.5)
+        }
+
         pdf(outfileName)
-        print(ggplot2::ggplot(path,aes(Name,pGFdr,fill = Status, size = pSize)) +
-                      ggplot2::geom_point(alpha = 0.7, shape = 21) +
-                      ggplot2::scale_size_area(max_size = 15) + theme_bw(base_size = 15) +
-                      ggplot2::theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
-                      ggplot2::scale_fill_manual(values = c("forestgreen","Red")) +
-                      ggplot2::labs(x = "Pathway size", y = "-log10(p-value)",fill = "Status", title = title)
-        )
+        print(p)
         dev.off()
 }
