@@ -20,7 +20,7 @@
 #'
 
 plotVolcano <- function(DESeqOutput, fdr = 0.05, foldChangeLine = NULL, markGenes = NULL,
-                        colorGenes = NULL, useGeneNames = TRUE, outFile) {
+                        colorGenes = NULL, useGeneNames = TRUE, outFile = NULL) {
 
         # get data and format
         res_obj <- read.delim(DESeqOutput,header = TRUE, stringsAsFactors = TRUE)
@@ -70,7 +70,8 @@ plotVolcano <- function(DESeqOutput, fdr = 0.05, foldChangeLine = NULL, markGene
         de_down <- length(which(res_obj$log2FoldChange < 0 & res_obj$padj < fdr ))
 
         # plot and save
-        pdf(outFile)
+        if(!is.null(outFile)) pdf(outFile)
+
         plot(plotdata$log2FoldChange, -log10(plotdata$padj),
              main=sprintf("Volcano plot\n(FDR: %.2f, up: %d, down: %d)",fdr,de_up,de_down),
              xlab="log2-fold change",
@@ -96,5 +97,8 @@ plotVolcano <- function(DESeqOutput, fdr = 0.05, foldChangeLine = NULL, markGene
         points(markedata$log2FoldChange,-log10(markedata$padj), pch = 1, lwd = 3, col = "black")
         calibrate::textxy(markedata$log2FoldChange, -log10(markedata$padj),markedata$geneID, cex = 0.6)
 
-        dev.off()
+        if(!is.null(outFile)) dev.off()
 }
+
+
+plotBars <- function(DESeqOutput, fdr = 0.05, outFile)

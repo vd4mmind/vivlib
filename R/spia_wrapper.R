@@ -14,7 +14,7 @@
 #' @examples
 #'
 #'
-spia_wrapper <- function(DESeqOutput, organism = "mmu", padjCutoff, outFile, outPlot){
+spia_wrapper <- function(DESeqOutput, organism = "mmu", padjCutoff, outFile, outPlot = NULL){
         df <- read.table(DESeqOutput, sep= "\t", header = TRUE, quote = "" )
         # load corresponding lib
         orgmap <- data.frame(org = c("mmu","hsa"), db = c("org.Mm.eg.db","org.Hs.eg.db"),stringsAsFactors = FALSE)
@@ -38,10 +38,11 @@ spia_wrapper <- function(DESeqOutput, organism = "mmu", padjCutoff, outFile, out
         colnames(top) <- c("TOP PATHWAYS : NAME",colnames(top[2:7]))
 
         # Write output
-        pdf(outPlot)
+        if(!is.null(outFile)) pdf(outPlot)
         SPIA::plotP(spia.degenes)
         gplots::textplot(top)
-        dev.off()
+        if(!is.null(outFile)) dev.off()
+
         write.table(spia.degenes,outFile, sep = "\t", quote = FALSE, row.names = FALSE)
 }
 
@@ -61,7 +62,7 @@ spia_wrapper <- function(DESeqOutput, organism = "mmu", padjCutoff, outFile, out
 #' spia_plotBubble(spia_wrapper_output, outfileName = "test.out, top = 20, title = "test plot)
 #'
 
-spia_plotBubble <- function(SPIAout,outfileName, top = 20, plotType = 1, title = NULL){
+spia_plotBubble <- function(SPIAout,outfileName = NULL, top = 20, plotType = 1, title = NULL){
         path <- read.delim(pipe(paste0("cut -f1,3,6,9,11 ",SPIAout)), header = TRUE)
         path$pGFdr <- -log10(path$pGFdr)
         path <- path[order(path$pGFdr,decreasing = TRUE),]
@@ -89,7 +90,7 @@ spia_plotBubble <- function(SPIAout,outfileName, top = 20, plotType = 1, title =
                         geom_text(size = 4,check_overlap = TRUE, angle = 10, nudge_y = -1.5)
         }
 
-        pdf(outfileName)
+        if(!is.null(outfileName)) pdf(outfileName)
         print(p)
-        dev.off()
+        if(!is.null(outfileName)) dev.off()
 }

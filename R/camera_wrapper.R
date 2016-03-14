@@ -87,7 +87,7 @@ runCamera <- function(counts,design,bmGeneNames, moduleFile="msigdb.v5.0.symbols
 #' Camera_plotbubble(CAMERAoutput, outfileName, top = 20, title = NULL)
 #'
 
-Camera_plotbubble <- function(CAMERAoutput, outfileName, top = 20, title = NULL){
+Camera_plotbubble <- function(CAMERAoutput, outfileName = NULL, top = 20, title = NULL){
         cam.dat <- read.table(CAMERAoutput, sep="\t", row.names = NULL)
         cam.dat <- cam.dat[order(cam.dat$FDR),]
         cam.dat <- cam.dat[1:top,]
@@ -105,7 +105,7 @@ Camera_plotbubble <- function(CAMERAoutput, outfileName, top = 20, title = NULL)
                 p <- p + ggplot2::ggtitle(title)
         }
 
-        pdf(outfileName)
+        if(!is.null(outfileName)) pdf(outfileName)
         print(p)
-        dev.off()
+        if(!is.null(outfileName)) dev.off()
 }
