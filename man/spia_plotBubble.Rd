@@ -4,7 +4,8 @@
 \alias{spia_plotBubble}
 \title{Make a bubblePlot for SPIA pathway output}
 \usage{
-spia_plotBubble(SPIAout, outfileName, top = 20, title = NULL)
+spia_plotBubble(SPIAout, outfileName = NULL, top = 20, plotType = 1,
+  title = NULL)
 }
 \arguments{
 \item{SPIAout}{output from spia_wrapper}

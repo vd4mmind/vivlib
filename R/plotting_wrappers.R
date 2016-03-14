@@ -101,4 +101,3 @@ plotVolcano <- function(DESeqOutput, fdr = 0.05, foldChangeLine = NULL, markGene
 }
 
 
-plotBars <- function(DESeqOutput, fdr = 0.05, outFile)

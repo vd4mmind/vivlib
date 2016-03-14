@@ -4,7 +4,8 @@
 \alias{spia_wrapper}
 \title{A wrapper over SPIA pathway perturbation analysis for mouse and human}
 \usage{
-spia_wrapper(DESeqOutput, organism = "mmu", padjCutoff, outFile, outPlot)
+spia_wrapper(DESeqOutput, organism = "mmu", padjCutoff, outFile,
+  outPlot = NULL)
 }
 \arguments{
 \item{DESeqOutput}{Tab-seperated DESeq2 output file}

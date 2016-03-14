@@ -5,7 +5,8 @@
 \title{Make an informative volcano plot using DESeq2 output}
 \usage{
 plotVolcano(DESeqOutput, fdr = 0.05, foldChangeLine = NULL,
-  markGenes = NULL, colorGenes = NULL, useGeneNames = TRUE, outFile)
+  markGenes = NULL, colorGenes = NULL, useGeneNames = TRUE,
+  outFile = NULL)
 }
 \arguments{
 \item{DESeqOutput}{Tab-seperated DESeq2 output file}

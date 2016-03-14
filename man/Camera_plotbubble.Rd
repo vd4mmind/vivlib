@@ -4,7 +4,8 @@
 \alias{Camera_plotbubble}
 \title{Make a bubble plot for CAMERA output}
 \usage{
-Camera_plotbubble(CAMERAoutput, outfileName, top = 20, title = NULL)
+Camera_plotbubble(CAMERAoutput, outfileName = NULL, top = 20,
+  title = NULL)
 }
 \arguments{
 \item{CAMERAoutput}{A tab-seperated file with CAMERA results.}
