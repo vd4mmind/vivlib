@@ -8,6 +8,8 @@
 #' @param Output Output tab seperated file
 #' @param pdfReport A report of processing
 #' @param col_order How are the columns arranged? (1 = control->test, 2 = test->control)
+#' @param heatmap_topN Number of top DE genes to plot in a heatmap (will make rlog trasformed and clustered heatmap)
+#'                      type "all" for all DE genes.
 #'
 #' @return Output file and Pdf Report of DESeq2 analysis
 #' @export
@@ -18,7 +20,7 @@
 
 
 DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "deseq_output.tab",
-                          col_order = 1, pdfReport = "deseq_report.pdf"){
+                          col_order = 1, heatmap_topN = 20, pdfReport = "deseq_report.pdf"){
 
         # Prepare data
         message("reading data")
@@ -33,10 +35,12 @@ DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
                 numReplicates_test <- as.integer(numReplicates)
         }
 
-        colnames(input) <- ifelse(col_order == 1,
-                                  c(paste0("Control_",1:numReplicates_cont),paste0("KD_",1:numReplicates_test)),
-                                  c(paste0("KD_",1:numReplicates_test),paste0("Control_",1:numReplicates_cont))
-                                )
+        if(col_order == 1) {
+                colnames(input) <- c(paste0("Control_",1:numReplicates_cont),paste0("KD_",1:numReplicates_test))
+        } else {
+                colnames(input) <- c(paste0("KD_",1:numReplicates_test),paste0("Control_",1:numReplicates_cont))
+        }
+
         # DESeq
         samples <- data.frame(row.names = colnames(input),
                               condition = rep(c("Cnt","KD"),each = numReplicates))
@@ -45,24 +49,36 @@ DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
         dds <- DESeq2::DESeq(dds)
         ddr <- DESeq2::results(dds,alpha = fdr)
         ddr.df <- as.data.frame(ddr)
-        df.filt <- dplyr::filter(ddr.df,padj < 0.01)
+        df.filt <- ddr.df[which(ddr.df$padj < 0.01),]
         df.plot <- data.frame(Status = c("Up","Down"),
                               Genes = c(length(which(df.filt$log2FoldChange > 0)),
                                         length(which(df.filt$log2FoldChange < 0))
                               )
         )
-        # Write output
-        rld <- DESeq2::rlog(dds)
-        select <- order(rowMeans(DESeq2::counts(dds,normalized=TRUE)),decreasing=TRUE)[1:20]
 
+        ## select top DE genes for heatmap
+        rld <- DESeq2::rlog(dds)
+        decounts <- DESeq2::counts(dds,normalized=TRUE)
+        decounts <- merge(decounts,df.filt,by=0)
+
+        # order by fold change (by abs foldch if only few top genes requested)
+        select <- order(abs(decounts$log2FoldChange), decreasing=TRUE)
+        if(heatmap_topN != "all"){
+                select <- select[1:heatmap_topN]
+        }
+        data <- SummarizedExperiment::assay(rld)[select,]
+
+        # Write output
         message("writing results")
         pdf(pdfReport)
         DESeq2::plotSparsity(dds)
         DESeq2::plotDispEsts(dds)
         print(DESeq2::plotPCA(rld))
-        pheatmap::pheatmap(SummarizedExperiment::assay(rld)[select,],
-                           cluster_rows=TRUE, show_rownames=TRUE,
-                           cluster_cols=FALSE,main = "Heatmap : Top 20 expressed genes")
+        pheatmap::pheatmap(data,cluster_rows = TRUE, clustering_method = "average",
+                           show_rownames=TRUE,
+                           cluster_cols=FALSE,main = sprintf("Heatmap : Top %d DE genes (by p-value)",heatmap_topN)
+                        )
+
         DESeq2::plotMA(ddr)
         print(ggplot2::ggplot(df.plot,ggplot2::aes(Status,Genes,fill=Status)) +
                       ggplot2::geom_bar(stat = "identity", position = "dodge")

@@ -5,7 +5,7 @@
 \title{A Wrapper for DESeq2 over featurecounts output}
 \usage{
 DESeq_wrapper(fcountOutput, numReplicates = 4, fdr = 0.01,
-  Output = "deseq_output.tab", col_order = 1,
+  Output = "deseq_output.tab", col_order = 1, heatmap_topN = 20,
   pdfReport = "deseq_report.pdf")
 }
 \arguments{
@@ -19,6 +19,9 @@ or a vector with number of replicates for control and for test seperately)}
 \item{Output}{Output tab seperated file}
 
 \item{col_order}{How are the columns arranged? (1 = control->test, 2 = test->control)}
+
+\item{heatmap_topN}{Number of top DE genes to plot in a heatmap (will make rlog trasformed and clustered heatmap)
+type "all" for all DE genes.}
 
 \item{pdfReport}{A report of processing}
 }

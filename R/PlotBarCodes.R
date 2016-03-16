@@ -26,6 +26,7 @@ makeVoomInput <- function(counts,design,bmGeneNames,name="name"){
   counts = counts[which(means > 1),]
 
   # add gene names from biomart file
+  
   bmGeneNames = read.table(bmGeneNames,sep="\t", header=TRUE, row.names=1)
   matchingIds = merge(counts, bmGeneNames,
                       by.x = 0,
@@ -144,14 +145,14 @@ plotBarCodes <- function(GSEfile,ourVoomFile, batchAnalyse=TRUE, VoomInputName=N
         pdf(file = paste0(outFolder,"/",GSEname,"_vs_",VoomInputName, ".pdf"), width = 6, height = 6)
 
         ## the stats[index] is based on the gene symbol
-        barcodeplot(statistics = fit$t[,"conditiontreatment"],index = GSE_df$idx[GSE_df$logFC > 0],
+        limma::barcodeplot(statistics = fit$t[,"conditiontreatment"],index = GSE_df$idx[GSE_df$logFC > 0],
                                  index2 = GSE_df$idx[GSE_df$logFC < 0], main = (paste(GSEname," vs ",VoomInputName))
                     )
 
         ## Do roast and add testScores
         testRes <- roast(index = GSE_df$idx, y = y, design = y$design,contrast = 2,
                                    nrot = 9999, gene.weights = GSE_df$logFC)
-        textplot(as.data.frame(testRes),cex=0.5,col.colnames="steelblue",col.rownames = "red")
+        gplots::textplot(as.data.frame(testRes),cex=0.5,col.colnames="steelblue",col.rownames = "red")
 
         dev.off()
       }
