@@ -20,7 +20,7 @@ plotVolcano(DESeqOutput, fdr = 0.05, foldChangeLine = NULL,
 
 \item{colorGenes}{geneIDs for the genes to color}
 
-\item{useGeneNames}{Use gene names instead of default geneIDs. only works if the output
+\item{useGeneNames}{Use gene names instead of default geneIDs. only works if the input
 has been annotated by \code{\link{annotate_DESeqOutput}} function.}
 
 \item{outFile}{Name of output pdf file}

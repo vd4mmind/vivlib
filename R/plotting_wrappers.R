@@ -7,7 +7,7 @@
 #'                      (for positive andnegative fold change). Default is to plot no line
 #' @param markGenes geneIDs for the genes to mark (a circle with gene name will be added)
 #' @param colorGenes geneIDs for the genes to color
-#' @param useGeneNames Use gene names instead of default geneIDs. only works if the output
+#' @param useGeneNames Use gene names instead of default geneIDs. only works if the input
 #'                      has been annotated by \code{\link{annotate_DESeqOutput}} function.
 #' @param outFile Name of output pdf file
 #'
@@ -101,3 +101,63 @@ plotVolcano <- function(DESeqOutput, fdr = 0.05, foldChangeLine = NULL, markGene
 }
 
 
+
+#' Plot heatmap of raw counts for top DEgenes
+#'
+#' @param DESeqOutput A tab seperated deseq2-output file
+#' @param fdr FDR cutoff for DE genes
+#' @param fcountOutput Featurecounts output (for raw counts)
+#' @param sampleNames samplenames for heatmap column label (must be the same order as in featurecounts file)
+#' @param topNgenes How many genes to plot. Type NULL for all genes (might take long time)
+#' @param clusterbyCorr Whether to cluster row/columns by correlations. Default is eucledian distances.
+#' @param useGeneNames Use gene names to plot instead of default geneIDs. only works if the input
+#'                      has been annotated by \code{\link{annotate_DESeqOutput}} function.
+#' @param markGenes Genes to mark in bold on heatmap.
+#' @param outFile File name to save the output. NULL prints heatmap on screen.
+#'
+#' @return A heatmap.
+#' @export
+#'
+#' @examples
+#'
+#'
+
+plotHeatmap <- function(DESeqOutput, fdr = 0.05, fcountOutput, sampleNames, topNgenes = 100,
+                        clusterbyCorr = FALSE, useGeneNames = TRUE, markGenes = NULL,
+                        outFile = NULL) {
+
+        ## read the data and subset it
+        deseqRes <- read.delim(DESeqOutput,header = TRUE)
+        deseqRes <- deseqRes[which(deseqRes$padj < fdr),]
+        deseqRes <- deseqRes[order(deseqRes$padj),]
+        deseqRes <- deseqRes[!duplicated(deseqRes$Row.names),]
+        if(!is.null(topNgenes)) {
+                deseqRes <- deseqRes[1:topNgenes,]
+        }
+
+        ## read and subset fcountoutput
+        fcout <- read.delim(fcountOutput,skip = 1, header = TRUE, row.names = 1)
+        fcout <- fcout[which(rownames(fcout) %in% deseqRes$Row.names), 6:ncol(fcout)]
+        fcout <- fcout[order(deseqRes$padj),]
+        colnames(fcout) <- sampleNames
+
+        ## make heatmap
+        # cluster rows by pearson and cols by spearman
+        if(clusterbyCorr){
+                hr <- as.dist(1-cor(t(as.matrix(fcout)), method="pearson"))
+                hc <- as.dist(1-cor(as.matrix(fcout), method="spearman"))
+        } else {
+                hr <- NULL
+                hc <- NULL
+        }
+        # use gene names
+        if(useGeneNames){
+                rowlab = deseqRes$external_gene_name
+        } else rowlab = NULL
+
+        pheatmap::pheatmap(fcout, clustering_distance_rows = hr, cutree_rows = splitClusters,
+                           clustering_distance_cols = hc, labels_row = rowlab,
+                           main = sprintf("Raw counts: Top %d DE genes",topNgenes), filename = outFile)
+        # splitting clusters (not implemented)
+        if(markGenes) print("marking genes not implemented yet!")
+}
