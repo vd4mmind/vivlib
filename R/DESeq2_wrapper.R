@@ -86,4 +86,5 @@ DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
         dev.off()
 
         write.table(ddr.df,file = Output,sep = "\t",quote = FALSE)
+        save(dds,ddr, file = paste0(Output,"_DESeq.Rdata"))
 }
