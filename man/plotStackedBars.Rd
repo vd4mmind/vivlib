@@ -4,7 +4,8 @@
 \alias{plotStackedBars}
 \title{Plot Stacked barchart of DE genes using DESeq2 output}
 \usage{
-plotStackedBars(DESeqOutput, fdr = 0.05, foldCh = "abs", outFile = NULL)
+plotStackedBars(DESeqOutput, fdr = 0.05, foldCh = "abs",
+  sampleName = NULL, outFile = NULL)
 }
 \arguments{
 \item{DESeqOutput}{A tab-seperated DESeq2 output file}
@@ -13,6 +14,8 @@ plotStackedBars(DESeqOutput, fdr = 0.05, foldCh = "abs", outFile = NULL)
 
 \item{foldCh}{Which scale of fold-change to plot. Choose from "abs" (absolute)
 and "log2" (log2).}
+
+\item{sampleName}{Samplename to print on the plot.}
 
 \item{outFile}{Output pdf file name. If not, plot will be printed on screen.}
 }
