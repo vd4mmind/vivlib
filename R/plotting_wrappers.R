@@ -70,7 +70,9 @@ plotVolcano <- function(DESeqOutput, fdr = 0.05, foldChangeLine = NULL, markGene
         de_down <- length(which(res_obj$log2FoldChange < 0 & res_obj$padj < fdr ))
 
         # plot and save
-        if(!is.null(outFile)) pdf(outFile)
+        if(!is.null(outFile)) {
+                pdf(outFile)
+        }
 
         plot(plotdata$log2FoldChange, -log10(plotdata$padj),
              main=sprintf("Volcano plot\n(FDR: %.2f, up: %d, down: %d)",fdr,de_up,de_down),
@@ -97,14 +99,16 @@ plotVolcano <- function(DESeqOutput, fdr = 0.05, foldChangeLine = NULL, markGene
         points(markedata$log2FoldChange,-log10(markedata$padj), pch = 1, lwd = 3, col = "black")
         calibrate::textxy(markedata$log2FoldChange, -log10(markedata$padj),markedata$geneID, cex = 0.6)
 
-        if(!is.null(outFile)) dev.off()
+        if(!is.null(outFile)) {
+                dev.off()
+        }
 }
 
 
 
-#' Plot heatmap of raw counts for top DEgenes
+#' Plot heatmap of raw counts for top DEgenes using DESeq2 output
 #'
-#' @param DESeqOutput A tab seperated deseq2-output file
+#' @param DESeqOutput A tab-seperated DESeq2 output file
 #' @param fdr FDR cutoff for DE genes
 #' @param fcountOutput Featurecounts output (for raw counts)
 #' @param sampleNames samplenames for heatmap column label (must be the same order as in featurecounts file)
@@ -160,4 +164,63 @@ plotHeatmap <- function(DESeqOutput, fdr = 0.05, fcountOutput, sampleNames, topN
                            main = sprintf("Raw counts: Top %d DE genes",topNgenes), filename = outFile)
         # splitting clusters (not implemented)
         if(markGenes) print("marking genes not implemented yet!")
+}
+
+
+
+#' Plot Stacked barchart of DE genes using DESeq2 output
+#'
+#' @param DESeqOutput A tab-seperated DESeq2 output file
+#' @param fdr FDR cutoff for DE genes
+#' @param foldCh Which scale of fold-change to plot. Choose from "abs" (absolute)
+#'                      and "log2" (log2).
+#' @param outFile Output pdf file name. If not, plot will be printed on screen.
+#'
+#' @return Stacked bar chart of DE gene counts.
+#' @export
+#'
+#' @examples
+#'
+#'
+
+plotStackedBars <- function(DESeqOutput, fdr = 0.05, foldCh = "abs", outFile = NULL) {
+        deseqRes <- read.delim(DESeqOutput,header = TRUE)
+
+        # subset by fdr
+        deseqRes <- deseqRes[which(deseqRes$padj < fdr),]
+        deseqRes <- na.omit(deseqRes[!duplicated(deseqRes$Row.names),])
+        deseqRes$Status <- ifelse(deseqRes$log2FoldChange < 0, "Down", "Up")
+        deseqRes$absfoldch <- 2^abs(deseqRes$log2FoldChange)
+
+        # make fold ch category
+        if(foldch == "abs") {
+                deseqRes$category <- ifelse(deseqRes$absfoldch < 2, "< 2 fold",
+                                            ifelse(deseqRes$absfoldch < 6, "2 to 6 fold",
+                                                   ifelse(deseqRes$absfoldch < 10, "6 to 10 fold", "> 10 fold")
+                                            ))
+                deseqRes$category <- factor(deseqRes$category,
+                                            levels = c("< 2 fold", "2 to 6 fold","6 to 10 fold", "> 10 fold"))
+        } else {
+                deseqRes$category <- ifelse(abs(deseqRes$log2FoldChange) < 2, "< 2 fold",
+                                            ifelse(abs(deseqRes$log2FoldChange) < 4, "2 to 4 fold",
+                                                   ifelse(abs(deseqRes$log2FoldChange) < 8, "4 to 8 fold", "> 8 fold")
+                                            ))
+                deseqRes$category <- factor(deseqRes$category,
+                                            levels = c("< 2 fold", "2 to 4 fold", "4 to 8 fold", "> 8 fold"))
+        }
+
+        # plot
+        p <- ggplot(deseqRes,aes(Status, fill = Status, alpha = category)) +
+                geom_bar(colour = "black") + theme_grey(base_size = 16) +
+                scale_y_continuous(breaks = round(seq(0, nrow(deseqRes) + 500, by = 500)) ) +
+                scale_fill_manual(values = c("darkred","darkgreen")) +
+                labs(y = "No. of Genes", fill = "Level", title = "DE genes (divided by fold change)")
+
+        if(!is.null(outFile)) {
+                pdf(outFile)
+                print(p)
+                dev.off()
+        } else {
+                return(p)
+        }
 }
