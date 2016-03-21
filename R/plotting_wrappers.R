@@ -174,6 +174,7 @@ plotHeatmap <- function(DESeqOutput, fdr = 0.05, fcountOutput, sampleNames, topN
 #' @param fdr FDR cutoff for DE genes
 #' @param foldCh Which scale of fold-change to plot. Choose from "abs" (absolute)
 #'                      and "log2" (log2).
+#' @param sampleName Samplename to print on the plot.
 #' @param outFile Output pdf file name. If not, plot will be printed on screen.
 #'
 #' @return Stacked bar chart of DE gene counts.
@@ -183,7 +184,8 @@ plotHeatmap <- function(DESeqOutput, fdr = 0.05, fcountOutput, sampleNames, topN
 #'
 #'
 
-plotStackedBars <- function(DESeqOutput, fdr = 0.05, foldCh = "abs", outFile = NULL) {
+plotStackedBars <- function(DESeqOutput, fdr = 0.05, foldCh = "abs", sampleName = NULL, outFile = NULL) {
+
         deseqRes <- read.delim(DESeqOutput,header = TRUE)
 
         # subset by fdr
@@ -193,7 +195,7 @@ plotStackedBars <- function(DESeqOutput, fdr = 0.05, foldCh = "abs", outFile = N
         deseqRes$absfoldch <- 2^abs(deseqRes$log2FoldChange)
 
         # make fold ch category
-        if(foldch == "abs") {
+        if(foldCh == "abs") {
                 deseqRes$category <- ifelse(deseqRes$absfoldch < 2, "< 2 fold",
                                             ifelse(deseqRes$absfoldch < 6, "2 to 6 fold",
                                                    ifelse(deseqRes$absfoldch < 10, "6 to 10 fold", "> 10 fold")
@@ -214,7 +216,8 @@ plotStackedBars <- function(DESeqOutput, fdr = 0.05, foldCh = "abs", outFile = N
                 geom_bar(colour = "black") + theme_grey(base_size = 16) +
                 scale_y_continuous(breaks = round(seq(0, nrow(deseqRes) + 500, by = 500)) ) +
                 scale_fill_manual(values = c("darkred","darkgreen")) +
-                labs(y = "No. of Genes", fill = "Level", title = "DE genes (divided by fold change)")
+                labs(y = "No. of Genes", fill = "Level",
+                     title = paste0(sampleName, " DE genes (divided by fold change)" ))
 
         if(!is.null(outFile)) {
                 pdf(outFile)
