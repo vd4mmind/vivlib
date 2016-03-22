@@ -52,6 +52,10 @@ spia_wrapper <- function(DESeqOutput, organism = "mmu", padjCutoff, outFile, out
 #' @param SPIAout output from spia_wrapper
 #' @param outfileName output pdf file name for plot
 #' @param top How many top pathways to plot (by pGFdr value)
+#' @param plotType Which kind of bubble plot to make. options are :
+#'                      1 (activated and inactivated pathways together) or
+#'                      2 (activated and inactivated pathways split by a horizontal line).
+#'                      Note that in type 2 the p values appear as negative for inactivated pathways.
 #' @param title Title of the plot
 #'
 #' @return plot A bubbleplot in pdf format

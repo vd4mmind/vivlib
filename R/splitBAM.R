@@ -1,9 +1,8 @@
 
 
-#' Filter a bam file by given criteria
+#' Split a bam file by given criteria
 #'
 #' @param bamFile Bam file path
-#' @param outfolder Output folder path
 #' @param splitby How to split the file ("strand","chr","flag","mapq")
 #' @param chrnameList list of Chromosomes to split by
 #' @param flagList List of samflags to split by
@@ -16,10 +15,10 @@
 #'
 #' @examples
 #'
-#' splitBAM(bam = "test.bam", outfolder = "test.out", splitby = "strand", chrnameList = NULL, flagList = NULL,
+#' splitBAM(bam = "test.bam", splitby = "strand", chrnameList = NULL, flagList = NULL,
 #'              mapqList = NULL, outfile_prefix, nthreads = 20)
 
-splitBAM <- function(bamFile, outfolder, splitby = "strand", chrnameList = NULL, flagList = NULL,
+splitBAM <- function(bamFile, splitby = "strand", chrnameList = NULL, flagList = NULL,
                      mapqList = NULL, outfile_prefix, nthreads = 20) {
 
         ## make filterRules (split by chr)

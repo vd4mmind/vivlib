@@ -6,7 +6,7 @@
 \usage{
 plotHeatmap(DESeqOutput, fdr = 0.05, fcountOutput, sampleNames,
   topNgenes = 100, clusterbyCorr = FALSE, useGeneNames = TRUE,
-  markGenes = NULL, outFile = NULL)
+  markGenes = NULL, outFile = NA)
 }
 \arguments{
 \item{DESeqOutput}{A tab-seperated DESeq2 output file}

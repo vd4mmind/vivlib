@@ -2,15 +2,13 @@
 % Please edit documentation in R/splitBAM.R
 \name{splitBAM}
 \alias{splitBAM}
-\title{Filter a bam file by given criteria}
+\title{Split a bam file by given criteria}
 \usage{
-splitBAM(bamFile, outfolder, splitby = "strand", chrnameList = NULL,
-  flagList = NULL, mapqList = NULL, outfile_prefix, nthreads = 20)
+splitBAM(bamFile, splitby = "strand", chrnameList = NULL, flagList = NULL,
+  mapqList = NULL, outfile_prefix, nthreads = 20)
 }
 \arguments{
 \item{bamFile}{Bam file path}
-
-\item{outfolder}{Output folder path}
 
 \item{splitby}{How to split the file ("strand","chr","flag","mapq")}
 
@@ -28,11 +26,11 @@ splitBAM(bamFile, outfolder, splitby = "strand", chrnameList = NULL,
 Splitted, sorted and indexed bam files
 }
 \description{
-Filter a bam file by given criteria
+Split a bam file by given criteria
 }
 \examples{
 
-splitBAM(bam = "test.bam", outfolder = "test.out", splitby = "strand", chrnameList = NULL, flagList = NULL,
+splitBAM(bam = "test.bam", splitby = "strand", chrnameList = NULL, flagList = NULL,
              mapqList = NULL, outfile_prefix, nthreads = 20)
 }
 

@@ -14,6 +14,11 @@ spia_plotBubble(SPIAout, outfileName = NULL, top = 20, plotType = 1,
 
 \item{top}{How many top pathways to plot (by pGFdr value)}
 
+\item{plotType}{Which kind of bubble plot to make. options are :
+1 (activated and inactivated pathways together) or
+2 (activated and inactivated pathways split by a horizontal line).
+Note that in type 2 the p values appear as negative for inactivated pathways.}
+
 \item{title}{Title of the plot}
 }
 \value{

@@ -128,7 +128,7 @@ plotVolcano <- function(DESeqOutput, fdr = 0.05, foldChangeLine = NULL, markGene
 
 plotHeatmap <- function(DESeqOutput, fdr = 0.05, fcountOutput, sampleNames, topNgenes = 100,
                         clusterbyCorr = FALSE, useGeneNames = TRUE, markGenes = NULL,
-                        outFile = NULL) {
+                        outFile = NA) {
 
         ## read the data and subset it
         deseqRes <- read.delim(DESeqOutput,header = TRUE)
@@ -151,19 +151,19 @@ plotHeatmap <- function(DESeqOutput, fdr = 0.05, fcountOutput, sampleNames, topN
                 hr <- as.dist(1-cor(t(as.matrix(fcout)), method="pearson"))
                 hc <- as.dist(1-cor(as.matrix(fcout), method="spearman"))
         } else {
-                hr <- NULL
-                hc <- NULL
+                hr <- "euclidean"
+                hc <- "euclidean"
         }
         # use gene names
         if(useGeneNames){
                 rowlab = deseqRes$external_gene_name
         } else rowlab = NULL
 
-        pheatmap::pheatmap(fcout, clustering_distance_rows = hr, cutree_rows = splitClusters,
-                           clustering_distance_cols = hc, labels_row = rowlab,
+        pheatmap::pheatmap(fcout, clustering_distance_rows = hr,
+                           clustering_distance_cols = hc, labels_row = rowlab,fontsize_row = 5,
                            main = sprintf("Raw counts: Top %d DE genes",topNgenes), filename = outFile)
         # splitting clusters (not implemented)
-        if(markGenes) print("marking genes not implemented yet!")
+        if(!is.null(markGenes)) print("marking genes not implemented yet!")
 }
 
 
