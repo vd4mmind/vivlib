@@ -68,12 +68,26 @@ DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
         }
         data <- SummarizedExperiment::assay(rld)[select,]
 
-        # Write output
+        ## take out cooks distance statistics for outlier detection
+        W <- ddr$stat
+        maxCooks <- apply(assays(dds)[["cooks"]],1,max)
+        idx <- !is.na(W)
+        m <- ncol(dds)
+        p <- 3
+
+        ## Write output
         message("writing results")
         pdf(pdfReport)
+
         DESeq2::plotSparsity(dds)
         DESeq2::plotDispEsts(dds)
         print(DESeq2::plotPCA(rld))
+        # plot cooks
+        plot(rank(W[idx]), maxCooks[idx], xlab="rank of Wald statistic",
+             ylab="maximum Cook's distance per gene",
+             ylim=c(0,5), cex=.4, col=rgb(0,0,0,.3))
+        abline(h=qf(.99, p, m - p))
+        #plot heatmap
         pheatmap::pheatmap(data,cluster_rows = TRUE, clustering_method = "average",
                            show_rownames=TRUE,
                            cluster_cols=FALSE,main = sprintf("Heatmap : Top %d DE genes (by p-value)",heatmap_topN)
@@ -83,6 +97,7 @@ DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
         print(ggplot2::ggplot(df.plot,ggplot2::aes(Status,Genes,fill=Status)) +
                       ggplot2::geom_bar(stat = "identity", position = "dodge")
         )
+
         dev.off()
 
         write.table(ddr.df,file = Output,sep = "\t",quote = FALSE)
