@@ -23,7 +23,14 @@ spia_wrapper <- function(DESeqOutput, organism = "mmu", padjCutoff, outFile, out
         library(db,character.only = TRUE)
 
         # get ENTREZ id
-        ensToEntrez <- AnnotationDbi::select(org.Mm.eg.db,as.character(df$Row.names),"ENTREZID", keytype = "ENSEMBL" )
+        if(db == "org.Hs.eg.db"){
+                ensToEntrez <- AnnotationDbi::select(org.Hs.eg.db,as.character(df$Row.names),"ENTREZID",
+                                                     keytype = "ENSEMBL" )
+        } else {
+                ensToEntrez <- AnnotationDbi::select(org.Mm.eg.db,as.character(df$Row.names),"ENTREZID",
+                                                     keytype = "ENSEMBL" )
+        }
+
         df <- merge(df,ensToEntrez,by = 1)
         df.dg <- dplyr::filter(df, padj < padjCutoff,!(is.na(ENTREZID)),!(duplicated(ENTREZID)))
         df.map <- df.dg$log2FoldChange
