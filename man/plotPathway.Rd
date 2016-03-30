@@ -16,6 +16,9 @@ plotPathway(DESeqOutput, fdr = 0.05, pathway_IDs = c("05200", "04110"),
 
 \item{genome}{Select from hg38, mm10, dm6. (although it's agnostic to genome versions in general).}
 }
+\value{
+KEGG plot
+}
 \description{
 Plot DESeq2 output on a selected KEGG pathway map
 }
