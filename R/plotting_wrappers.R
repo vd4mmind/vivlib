@@ -236,7 +236,7 @@ plotStackedBars <- function(DESeqOutput, fdr = 0.05, foldCh = "abs", sampleName 
 #' @param pathway_IDs KEGG ids for the pathways to plot
 #' @param genome Select from hg38, mm10, dm6. (although it's agnostic to genome versions in general).
 #'
-#' @return
+#' @return KEGG plot
 #' @export
 #'
 #' @examples
