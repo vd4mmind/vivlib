@@ -227,3 +227,58 @@ plotStackedBars <- function(DESeqOutput, fdr = 0.05, foldCh = "abs", sampleName 
                 return(p)
         }
 }
+
+
+#' Plot DESeq2 output on a selected KEGG pathway map
+#'
+#' @param DESeqOutput A tab-seperated DESeq2 output file
+#' @param fdr FDR cutoff for Diff-Exp genes.
+#' @param pathway_IDs KEGG ids for the pathways to plot
+#' @param genome Select from hg38, mm10, dm6. (although it's agnostic to genome versions in general).
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'
+#'
+
+plotPathway <- function(DESeqOutput, fdr = 0.05, pathway_IDs = c("05200","04110"), genome = "hg38"){
+
+        deOut <- read.delim(DESeqOutput)
+        # subset DEgenes and get kegg names for the genes
+        deOut <- deOut[which(deOut$padj < fdr), c("Row.names","log2FoldChange","external_gene_name")]
+
+        # get entrez IDs
+        genomes = data.frame(id = c("hg38","mm10","dm6"),
+                             path = c("hsapiens_gene_ensembl",
+                                      "mmusculus_gene_ensembl",
+                                      "dmelanogaster_gene_ensembl"),
+                             keggname = c("hsa","mmu","dmel"),
+                             stringsAsFactors = FALSE)
+
+        assertthat::assert_that(genome %in% genomes$id)
+        message("fetching annotation")
+        tofetch <- dplyr::filter(genomes,id == genome)$path
+        ensembl = biomaRt::useMart("ensembl",tofetch)
+
+        ext.data <- biomaRt::getBM(attributes = c("ensembl_gene_id","entrezgene"),filters = "ensembl_gene_id",
+                                   values = deOut$Row.names, mart = ensembl)
+        deOut <- merge(deOut,ext.data, by = 1, all.x = TRUE)
+        deOut <- deOut[!(duplicated(deOut$entrezgene)),]
+        deOut <- na.omit(deOut)
+        deOut <- as.data.frame(deOut[,2], row.names = deOut$entrezgene)
+        colnames(deOut) <- "logFC"
+
+        ## plot selected pathways
+        org <- dplyr::filter(genomes,id == genome)$keggname
+
+        col <- KEGGprofile::col_by_value(deOut, col = colorRampPalette(c("red", "grey50", "navyblue"))(1024),
+                                         range = c(-6, 6))
+
+        pv.out <- lapply(pathway_IDs,function(x) {
+                KEGGprofile::plot_pathway(gene_expr = deOut, pathway_id = x, bg_col = col, type = "bg",
+                                          text_col = "white",magnify = 1.2, species = org)
+        })
+
+}
