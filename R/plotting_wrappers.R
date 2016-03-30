@@ -258,6 +258,7 @@ plotPathway <- function(DESeqOutput, fdr = 0.05, pathway_IDs = c("05200","04110"
                              stringsAsFactors = FALSE)
 
         assertthat::assert_that(genome %in% genomes$id)
+
         message("fetching annotation")
         tofetch <- dplyr::filter(genomes,id == genome)$path
         ensembl = biomaRt::useMart("ensembl",tofetch)
