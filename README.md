@@ -1,7 +1,7 @@
 # vivlib
 Vivek Bhardwaj  
 
-## vivlib : a wrapper for useful R functions that makes my life easier
+## vivlib : Wrappers for useful R functions that makes my life easier
 
 Some endorsements for vivlib :
 
