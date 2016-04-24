@@ -3,6 +3,7 @@
 export(Camera_plotbubble)
 export(DESeq_wrapper)
 export(annotate_DESeqOutput)
+export(clusterDEgenes)
 export(getIntrons_byGenes)
 export(makeVoomInput)
 export(plotBarCodes)
