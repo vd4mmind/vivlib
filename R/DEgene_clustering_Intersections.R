@@ -101,3 +101,50 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
         }
         save(dedata,sortedRes, hr, hc, file = paste0(outFile_prefix,"_clustering.Rdata") )
 }
+
+
+
+#' plot intersections of list of DE genes from multiple DESeq2 outputs
+#'
+#' @param DEoutList A vector, with names of DESeq2 output files to use.
+#' @param sampleNames Name of samples corresponding to the DESeq output file list.
+#' @param FDRcutoff FDR cutoff to select DE genes from the list
+#' @param outFile Name of output pdf file. If NULL, prints output on the screen
+#'
+#' @return A plot of Intersection of gene sets.
+#' @export
+#'
+#' @examples
+#' plotDEgeneOverlap(DEoutList, sampleNames, FDRcutoff = 0.05, outFile = NULL)
+#'
+
+plotDEgeneOverlap <- function(DEoutList, sampleNames, FDRcutoff = 0.05, outFile = NULL){
+        dedata <- lapply(DEoutList, function(x){
+                read.delim(pipe(paste0("cut -f1,3,7 ",x)),stringsAsFactors = FALSE)
+        })
+        names(dedata) <- sampleNames
+        # take cutoff and rename columns by sample
+        dedata <- mapply(function(x,y){
+                x <- x[which(x[,3] < FDRcutoff),c(1,3)]
+                colnames(x) <- c("GeneID",y)
+                return(x)
+        },dedata, sampleNames,SIMPLIFY = FALSE)
+
+        # merge all DE genes
+        dedata <- Reduce(function(x,y) merge(x, y, by = "GeneID", all.x = TRUE, all.y = TRUE), dedata)
+        dedata <- unique(dedata)
+        # get in format for plot
+        rownames(dedata) <- dedata$GeneID
+        dedata <- dedata[2:length(dedata)]
+        dedata[dedata < FDRcutoff] <- 1
+        dedata[dedata < 1] <- 0
+        dedata[is.na(dedata)] <- 0
+
+        if(!is.null(outFile)) pdf(outFile,width=1200,height = 1000)
+        UpSetR::upset(dedata,sets = colnames(dedata),number.angles = 30, point.size = 5,
+              name.size = 16, line.size = 2)
+
+        if(!is.null(outFile)) dev.off()
+
+
+}
