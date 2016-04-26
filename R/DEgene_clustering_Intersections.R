@@ -115,14 +115,14 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
         	message("Sorting genes as per clusters.")
         	hr.h <- hclust(hr)
         	hc.h <- hclust(hc)
-        	sortedRes <- dedata[rev(hr.h$labels[hr.h$order]),hc.h$labels[hc.h$order]]
+        	sortedRes <- dedata[hr.h$labels[hr.h$order],hc.h$labels[hc.h$order]]
         }
 
         ## cut clusters
 
         if(!is.na(cut_cluster)) {
         	message(paste0("Cutting tree into ",cut_cluster," clusters"))
-                cluscut <- cutree(hclust(hr), k = cut_cluster)
+                cluscut <- dendextend::cutree(hclust(hr), k = cut_cluster, order_clusters_as_data = FALSE)
 
                 declusters <- lapply(seq(1:cut_cluster), function(i){
                         clust_ids <- names(cluscut[cluscut == i])
