@@ -7,6 +7,7 @@
 #' @param method Which clustering method to use. Either "correlation" or "biclustering"
 #' @param cut_cluster A number to which the cluster dendrogram will be cut into (NA means do not cut clusters)
 #' @param row_annotation A data frame for the annotation of genes, with rownames corresponding to the Row.names column of the DESeq2 output. The columns can have annotations like chromosome, gene type etc..
+#' @param keepNAs Many genes will have fold change = NA in some samples after merging, since they are undetected in some samples. Select this if you want to still keep those genes (NAs will be converted to zeros for clustering).
 #' @param outFile_prefix A prefix for output files.
 #'
 #' @return A pdf with clustered heatmap, an .Rdata file with the hclust objects and the genes sorted by clustered output, and text file with genes divided by clusters (if cut_clusters is selected).
@@ -18,7 +19,7 @@
 #'
 
 clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "correlation",
-                           cut_cluster = NA, row_annotation = NA, outFile_prefix = NULL) {
+                           cut_cluster = NA, row_annotation = NA, keepNAs = TRUE, outFile_prefix = NULL) {
         # Read files
         dedata <- lapply(DEoutList, function(x){
                 read.delim(pipe(paste0("cut -f1,3,7 ",x)),stringsAsFactors = FALSE)
@@ -40,8 +41,13 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
         # get in shape
         rownames(dedata) <- dedata$GeneID
         dedata <- dedata[,2:ncol(dedata)]
-        dedata[is.na(dedata)] <- 0
-        message("NAs converted to zeros for clustering!")
+        if(keepNAs){
+                dedata[is.na(dedata)] <- 0
+                message("NAs converted to zeros for clustering!")
+        } else {
+                dedata <- na.omit(dedata)
+                message("Genes with FoldChange = NA removed for clustering!")
+        }
 
         ## compute distance
         if(method == "correlation") {
@@ -56,17 +62,22 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
         }
 
         # make row annotation
-        rowannot <- row_annotation[which(rownames(row_annotation) %in% rownames(dedata)),]
+        if(!is.na(row_annotation)){
+        	rowannot <- row_annotation[which(rownames(row_annotation) %in% rownames(dedata)),]
+        } else {
+        	rowannot <- NA
+        }
+
         ## plot clusters
         paletteLength <- 100
-        colors <- colorRampPalette(rev(RColorBrewer::brewer.pal(n = 5, name = "RdBu")))(pallength)
+        colors <- colorRampPalette(rev(RColorBrewer::brewer.pal(n = 5, name = "RdBu")))(paletteLength)
         # set breaks to get white to zero
         myBreaks <- c(seq(min(dedata), 0,
                           length.out=ceiling(paletteLength/2) + 1),
                       seq(max(dedata)/paletteLength, max(dedata),
                           length.out=floor(paletteLength/2)))
 
-        if(!is.null(outFile)) pdf(paste0(outFile_prefix,"_heatmap.pdf"))
+        if(!is.null(outFile_prefix)) pdf(paste0(outFile_prefix,"_heatmap.pdf"))
         lapply(c("row","none"), function(x){
                 pheatmap::pheatmap(dedata,color = colors, breaks = myBreaks,
                                    clustering_distance_rows = hr,clustering_distance_cols = hc,

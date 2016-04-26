@@ -6,7 +6,7 @@
 \usage{
 clusterDEgenes(DEoutList, sampleNames, FDRcutoff = 0.05,
   method = "correlation", cut_cluster = NA, row_annotation = NA,
-  outFile_prefix = NULL)
+  keepNAs = TRUE, outFile_prefix = NULL)
 }
 \arguments{
 \item{DEoutList}{A vector, with names of DESeq2 output files to use.}
@@ -20,6 +20,8 @@ clusterDEgenes(DEoutList, sampleNames, FDRcutoff = 0.05,
 \item{cut_cluster}{A number to which the cluster dendrogram will be cut into (NA means do not cut clusters)}
 
 \item{row_annotation}{A data frame for the annotation of genes, with rownames corresponding to the Row.names column of the DESeq2 output. The columns can have annotations like chromosome, gene type etc..}
+
+\item{keepNAs}{Many genes will have fold change = NA in some samples after merging, since they are undetected in some samples. Select this if you want to still keep those genes (NAs will be converted to zeros for clustering).}
 
 \item{outFile_prefix}{A prefix for output files.}
 }
