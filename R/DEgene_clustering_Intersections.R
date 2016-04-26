@@ -4,13 +4,26 @@
 #' @param DEoutList A vector, with names of DESeq2 output files to use.
 #' @param sampleNames Name of samples corresponding to the DESeq output file list.
 #' @param FDRcutoff FDR cutoff to select DE genes from the list
-#' @param method Which clustering method to use. Either "correlation" or "biclustering"
-#' @param cut_cluster A number to which the cluster dendrogram will be cut into (NA means do not cut clusters)
-#' @param row_annotation A data frame for the annotation of genes, with rownames corresponding to the Row.names column of the DESeq2 output. The columns can have annotations like chromosome, gene type etc..
-#' @param keepNAs Many genes will have fold change = NA in some samples after merging, since they are undetected in some samples. Select this if you want to still keep those genes (NAs will be converted to zeros for clustering).
+#' @param method Which clustering method to use. "correlation" or "biclustering",
+#' will allow output of gene names per cluster. Other methods are also supported
+#' (all methods of hclust + kmeans), but won't output genes per cluster
+#' @param cut_cluster A number to which the cluster dendrogram will be cut into
+#' (NA means do not cut clusters)
+#'
+#' @param row_annotation A data frame for the annotation of genes, with rownames
+#' corresponding to the Row.names column of the DESeq2 output. The columns can have
+#' annotations like chromosome, gene type etc..
+#'
+#' @param keepNAs Many genes will have fold change = NA in some samples after merging,
+#' since they are undetected in some samples. Select this if you want to still keep
+#' those genes (NAs will be converted to zeros for clustering).
+#'
 #' @param outFile_prefix A prefix for output files.
 #'
-#' @return A pdf with clustered heatmap, an .Rdata file with the hclust objects and the genes sorted by clustered output, and text file with genes divided by clusters (if cut_clusters is selected).
+#' @return A pdf with clustered heatmap, an .Rdata file with the hclust objects and the
+#' genes sorted by clustered output, and text file with genes divided by clusters
+#' (if cut_clusters is selected).
+#'
 #' @export
 #'
 #' @examples
@@ -50,15 +63,24 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
         }
 
         ## compute distance
+
         if(method == "correlation") {
                 hr <- as.dist(1 - cor(t(as.matrix(dedata)), method = "spearman"))
                 hc <- as.dist(1 - cor(as.matrix(dedata), method = "spearman"))
+                k <- NA
         } else if(method == "bicluster") {
                 print("Biclustering not implemented yet")
+        } else if(method == "kmeans") {
+        	    warning("Choosing kmeans! You won't get genes splitted by clusters..")
+        	    hr <- "euclidean"
+                hc <- "euclidean"
+                k <- cut_cluster
+                
         } else {
-                warning("Method neither correlation or bicluster! Picking eucledian..")
-                hr <- NA
-                hc <- NA
+                
+                hr <- dist(as.matrix(dedata), method = method)
+                hc <- dist(t(as.matrix(dedata)), method = method)
+                k <- NA
         }
 
         # make row annotation
@@ -79,9 +101,9 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
 
         if(!is.null(outFile_prefix)) pdf(paste0(outFile_prefix,"_heatmap.pdf"))
         lapply(c("row","none"), function(x){
-                pheatmap::pheatmap(dedata,color = colors, breaks = myBreaks,
+                pheatmap::pheatmap(dedata,color = colors, breaks = myBreaks, kmeans_k = k,
                                    clustering_distance_rows = hr,clustering_distance_cols = hc,
-                                   clustering_method = "complete", annotation_row = rowannot,
+                                   annotation_row = rowannot,
                                    show_rownames = FALSE, scale = x,cutree_rows = cut_cluster,
                                    main = paste0("DE genes clustered. Scale : ",x)
                 )
@@ -89,13 +111,17 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
         if(!is.null(outFile_prefix)) dev.off()
 
         ## sort genes as per cluster
-        hr.h <- hclust(hr)
-        hc.h <- hclust(hc)
-        sortedRes <- dedata[rev(hr.h$labels[hr.h$order]),hc.h$labels[hc.h$order]]
+        if(class(hr) == "dist"){
+        	message("Sorting genes as per clusters.")
+        	hr.h <- hclust(hr)
+        	hc.h <- hclust(hc)
+        	sortedRes <- dedata[rev(hr.h$labels[hr.h$order]),hc.h$labels[hc.h$order]]
+        }
 
         ## cut clusters
-        message(paste0("Cutting tree into ",cut_cluster," clusters"))
+
         if(!is.na(cut_cluster)) {
+        	message(paste0("Cutting tree into ",cut_cluster," clusters"))
                 cluscut <- cutree(hclust(hr), k = cut_cluster)
 
                 declusters <- lapply(seq(1:cut_cluster), function(i){

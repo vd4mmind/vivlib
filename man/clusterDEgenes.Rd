@@ -15,18 +15,27 @@ clusterDEgenes(DEoutList, sampleNames, FDRcutoff = 0.05,
 
 \item{FDRcutoff}{FDR cutoff to select DE genes from the list}
 
-\item{method}{Which clustering method to use. Either "correlation" or "biclustering"}
+\item{method}{Which clustering method to use. "correlation" or "biclustering",
+will allow output of gene names per cluster. Other methods are also supported
+(all methods of hclust + kmeans), but won't output genes per cluster}
 
-\item{cut_cluster}{A number to which the cluster dendrogram will be cut into (NA means do not cut clusters)}
+\item{cut_cluster}{A number to which the cluster dendrogram will be cut into
+(NA means do not cut clusters)}
 
-\item{row_annotation}{A data frame for the annotation of genes, with rownames corresponding to the Row.names column of the DESeq2 output. The columns can have annotations like chromosome, gene type etc..}
+\item{row_annotation}{A data frame for the annotation of genes, with rownames
+corresponding to the Row.names column of the DESeq2 output. The columns can have
+annotations like chromosome, gene type etc..}
 
-\item{keepNAs}{Many genes will have fold change = NA in some samples after merging, since they are undetected in some samples. Select this if you want to still keep those genes (NAs will be converted to zeros for clustering).}
+\item{keepNAs}{Many genes will have fold change = NA in some samples after merging,
+since they are undetected in some samples. Select this if you want to still keep
+those genes (NAs will be converted to zeros for clustering).}
 
 \item{outFile_prefix}{A prefix for output files.}
 }
 \value{
-A pdf with clustered heatmap, an .Rdata file with the hclust objects and the genes sorted by clustered output, and text file with genes divided by clusters (if cut_clusters is selected).
+A pdf with clustered heatmap, an .Rdata file with the hclust objects and the
+genes sorted by clustered output, and text file with genes divided by clusters
+(if cut_clusters is selected).
 }
 \description{
 Cluster DE genes by fold change from multiple files
