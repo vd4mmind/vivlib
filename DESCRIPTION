@@ -7,7 +7,7 @@ Description: An R package for useful wrappers the are used quite often by me (vi
 Depends:
     R (>= 3.2.2)
 Imports:
-        dplyr, assertthat, ggplot2, tidyr, pheatmap, reshape2, calibrate, gplots,
+        dplyr, assertthat, ggplot2, tidyr, pheatmap, reshape2, calibrate, gplots, RColorBrewer, dendextend, UpSetR,
         biomaRt, DESeq2, limma,  GenomicFeatures, S4Vectors, BiocParallel, Rsamtools, SPIA
 Suggests:
         edgeR
