@@ -32,7 +32,7 @@
 #'
 
 clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "correlation",
-                           cut_cluster = NA, row_annotation = NA, keepNAs = TRUE, outFile_prefix = NULL) {
+                           cut_cluster = NA, row_annotation = NULL, keepNAs = TRUE, outFile_prefix = NULL) {
         # Read files
         dedata <- lapply(DEoutList, function(x){
                 read.delim(pipe(paste0("cut -f1,3,7 ",x)),stringsAsFactors = FALSE)
@@ -75,16 +75,16 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
         	    hr <- "euclidean"
                 hc <- "euclidean"
                 k <- cut_cluster
-                
+
         } else {
-                
+
                 hr <- dist(as.matrix(dedata), method = method)
                 hc <- dist(t(as.matrix(dedata)), method = method)
                 k <- NA
         }
 
         # make row annotation
-        if(!is.na(row_annotation)){
+        if(!is.null(row_annotation)){
         	rowannot <- row_annotation[which(rownames(row_annotation) %in% rownames(dedata)),]
         } else {
         	rowannot <- NA
