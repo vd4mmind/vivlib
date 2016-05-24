@@ -5,7 +5,7 @@
 \title{Cluster DE genes by fold change from multiple files}
 \usage{
 clusterDEgenes(DEoutList, sampleNames, FDRcutoff = 0.05,
-  method = "correlation", cut_cluster = NA, row_annotation = NA,
+  method = "correlation", cut_cluster = NA, row_annotation = NULL,
   keepNAs = TRUE, outFile_prefix = NULL)
 }
 \arguments{
