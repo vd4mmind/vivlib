@@ -88,6 +88,7 @@ fcount_meantransform <- function(fcountOutput, samplenames, filterByCount = NULL
                 plotdat <- reshape2::melt(output)
                 print(ggplot(plotdat, aes(Var2, value, fill = Var2)) +
                               geom_boxplot(outlier.color = "red",notch = TRUE) +
+                              scale_y_log10() +
                               labs(x = "Sample", y = "Counts", fill = "Sample", title = "Mean expression by sample")
                 )
         }
