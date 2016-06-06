@@ -74,7 +74,7 @@ fcount_meantransform <- function(fcountOutput, samplenames, filterByCount = NULL
                 coldata <- data.frame(row.names = colnames(df2), sample = rep(name, ncol(df2)))
                 dds <- DESeq2::DESeqDataSetFromMatrix(df2, colData = coldata,design = ~1)
                 dds <- DESeq2::estimateSizeFactors(dds)
-                df2 <- counts(dds,normalized=TRUE)
+                df2 <- DESeq2::counts(dds,normalized=TRUE)
 
                 # return rowmeans
                 rmeans <- rowMeans(df2)
