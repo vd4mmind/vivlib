@@ -99,6 +99,8 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
                       seq(max(dedata)/paletteLength, max(dedata),
                           length.out=floor(paletteLength/2)))
 
+        ## TODO :: Set better contrasting colors for row and column annotations
+
         if(!is.null(outFile_prefix)) pdf(paste0(outFile_prefix,"_heatmap.pdf"))
         lapply(c("row","none"), function(x){
                 pheatmap::pheatmap(dedata,color = colors, breaks = myBreaks, kmeans_k = k,
