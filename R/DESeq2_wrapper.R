@@ -49,7 +49,7 @@ DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
         dds <- DESeq2::DESeq(dds)
         ddr <- DESeq2::results(dds,alpha = fdr)
         ddr.df <- as.data.frame(ddr)
-        df.filt <- ddr.df[which(ddr.df$padj < 0.01),]
+        df.filt <- ddr.df[which(ddr.df$padj < fdr),]
         df.plot <- data.frame(Status = c("Up","Down"),
                               Genes = c(length(which(df.filt$log2FoldChange > 0)),
                                         length(which(df.filt$log2FoldChange < 0))
