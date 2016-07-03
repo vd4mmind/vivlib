@@ -1,15 +1,9 @@
 # vivlib
 Vivek Bhardwaj  
 
-## vivlib : Wrappers for useful R functions that makes my life easier
+## vivlib : Useful functions and wrappers around RNAseq analysis
 
-Some endorsements for vivlib :
-
-> vivlib is so awesome.. --vivek
-
-> ever since I started using vivlib, my life changed for good.. --vivekbhr
-
-> vivlib is fantastic. It's the best for me. --vivbhr
+vivlib is a set of useful functions built around RNA-Seq analysis focussed on featurecounts and DESeq2. It includes exploring featurecounts output, performing DESeq2 and annotating the outputs and some downstream analysis. Some useful operations on BAM files and bed files are also included.
 
 ### Installation
 
@@ -37,4 +31,4 @@ ls(pos = "package:vivlib")
 
 ### Final Disclaimer
 
-Extensive testing and version increments for this package is not being done. So use it at your own risk!
+Internal testing and version increments for this package is not being done. So use it at your own risk!
