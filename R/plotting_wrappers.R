@@ -273,9 +273,11 @@ plotPathway <- function(DESeqOutput, fdr = 0.05, pathway_IDs = c("05200","04110"
 
         ## plot selected pathways
         org <- dplyr::filter(genomes,id == genome)$keggname
-
+        print("colorScale saved as : ",getwd(),"/colorScale.pdf")
+        pdf("colorScale.pdf")
         col <- KEGGprofile::col_by_value(deOut, col = colorRampPalette(c("red", "grey50", "navyblue"))(1024),
                                          range = c(-6, 6))
+        dev.off()
 
         pv.out <- lapply(pathway_IDs,function(x) {
                 KEGGprofile::plot_pathway(gene_expr = deOut, pathway_id = x, bg_col = col, type = "bg",
