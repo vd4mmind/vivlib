@@ -1,3 +1,10 @@
-language: r
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+sudo: false
 cache: packages
 r: bioc-release
+install:
+        - source("https://bioconductor.org/biocLite.R")
+        - biocLite("vivekbhr/vivlib")
+warnings_are_errors: false
