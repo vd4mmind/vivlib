@@ -22,7 +22,7 @@ plotHeatmap(DESeqOutput, fdr = 0.05, fcountOutput, sampleNames,
 \item{clusterbyCorr}{Whether to cluster row/columns by correlations. Default is eucledian distances.}
 
 \item{useGeneNames}{Use gene names to plot instead of default geneIDs. only works if the input
-has been annotated by \code{\link{annotate_DESeqOutput}} function.}
+has been annotated by \code{\link{annotate_DEoutput}} function.}
 
 \item{markGenes}{Genes to mark in bold on heatmap.}
 

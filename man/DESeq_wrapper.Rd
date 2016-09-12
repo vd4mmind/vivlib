@@ -5,7 +5,7 @@
 \title{A Wrapper for DESeq2 over featurecounts output}
 \usage{
 DESeq_wrapper(fcountOutput, numReplicates = 4, fdr = 0.01,
-  Output = "deseq_output.tab", col_order = 1, heatmap_topN = 20,
+  Output = "deseq_output.tsv", col_order = 1, heatmap_topN = 20,
   pdfReport = "deseq_report.pdf")
 }
 \arguments{

@@ -18,7 +18,7 @@ control/test or any set of factors.}
 tab-seperated file. The columns should be ("ensembl_gene_id","external_gene_id")}
 
 \item{moduleFile}{A file with modules to test. Download from
-\code{\link{http://software.broadinstitute.org/gsea/msigdb/index.jsp}}}
+\link{http://software.broadinstitute.org/gsea/msigdb/index.jsp}}
 
 \item{outfileName}{Output pdf file name.}
 

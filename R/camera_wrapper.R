@@ -8,7 +8,7 @@
 #'                      tab-seperated file. The columns should be ("ensembl_gene_id","external_gene_id")
 #' @param name File name to output filtering plots.
 #' @param moduleFile A file with modules to test. Download from
-#'                      \code{\link{http://software.broadinstitute.org/gsea/msigdb/index.jsp}}
+#'                      \link{http://software.broadinstitute.org/gsea/msigdb/index.jsp}
 #' @param outfileName Output pdf file name.
 #'
 #' @return CAMERA result object.

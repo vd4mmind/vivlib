@@ -19,7 +19,7 @@
 #'              pdfReport = "deseq_report.pdf")
 
 
-DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "deseq_output.tab",
+DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "deseq_output.tsv",
                           col_order = 1, heatmap_topN = 20, pdfReport = "deseq_report.pdf"){
 
         # Prepare data
@@ -123,7 +123,7 @@ DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
 #'              pdfReport = "edger_report.pdf")
 
 
-EdgeR_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "edger_output.tab",
+EdgeR_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "edger_output.tsv",
                           col_order = 1, heatmap_topN = 20, pdfReport = "edger_report.pdf"){
 
         # Prepare data
@@ -204,22 +204,22 @@ EdgeR_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
 }
 
 
-#' annotate DESeq2 Output file
+#' annotate the output file from Differential Expression wrapper
 #'
-#' @param DESeqOutput Tab-seperated DESeq2 output file
-#' @param Output Annotated output file
+#' @param DESeqOutput Tab-seperated output file from \code{\link{EdgeR_wrapper}} or \code{\link{DESeq_wrapper}}
+#' @param Output Annotated output file name
 #' @param remote Whether use biomart to annotate file
-#' @param genome When remote = TRUE, which genome to use? (available = "hg38","mm10","dm6")
+#' @param genome When remote = TRUE, which genome to use (available = "hg38","mm10","dm6")
 #' @param map_file If remote = FALSE, provide a map file (with ENS id and Gene id in column 1 and 2) respectively
 #'
 #' @return annotated output file
 #' @export
 #'
 #' @examples
-#' annotate_DESeqOutput(DESeqOutput = "test.out", Output = "test_annotated.out", remote = TRUE, genome = "hg38")
+#' annotate_DEoutput(DESeqOutput = "test.out", Output = "test_annotated.out", remote = TRUE, genome = "hg38")
 #'
 
-annotate_DESeqOutput <- function(DESeqOutput, Output, remote = TRUE, genome = "hg38", map_file ){
+annotate_DEoutput <- function(DESeqOutput, Output, remote = TRUE, genome = "hg38", map_file ){
 
         seqout <- read.delim(DESeqOutput,header = TRUE)
         if(remote == TRUE) {

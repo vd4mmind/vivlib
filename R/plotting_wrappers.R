@@ -8,7 +8,7 @@
 #' @param markGenes geneIDs for the genes to mark (a circle with gene name will be added)
 #' @param colorGenes geneIDs for the genes to color
 #' @param useGeneNames Use gene names instead of default geneIDs. only works if the input
-#'                      has been annotated by \code{\link{annotate_DESeqOutput}} function.
+#'                      has been annotated by \code{\link{annotate_DEoutput}} function.
 #' @param outFile Name of output pdf file
 #'
 #' @return A pdf file with volcano plot
@@ -115,7 +115,7 @@ plotVolcano <- function(DESeqOutput, fdr = 0.05, foldChangeLine = NULL, markGene
 #' @param topNgenes How many genes to plot. Type NULL for all genes (might take long time)
 #' @param clusterbyCorr Whether to cluster row/columns by correlations. Default is eucledian distances.
 #' @param useGeneNames Use gene names to plot instead of default geneIDs. only works if the input
-#'                      has been annotated by \code{\link{annotate_DESeqOutput}} function.
+#'                      has been annotated by \code{\link{annotate_DEoutput}} function.
 #' @param markGenes Genes to mark in bold on heatmap.
 #' @param outFile File name to save the output. NULL prints heatmap on screen.
 #'

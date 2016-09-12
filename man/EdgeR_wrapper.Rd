@@ -5,7 +5,7 @@
 \title{A Wrapper for EdgeR over featurecounts output}
 \usage{
 EdgeR_wrapper(fcountOutput, numReplicates = 4, fdr = 0.01,
-  Output = "edger_output.tab", col_order = 1, heatmap_topN = 20,
+  Output = "edger_output.tsv", col_order = 1, heatmap_topN = 20,
   pdfReport = "edger_report.pdf")
 }
 \arguments{
