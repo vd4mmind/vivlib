@@ -4,18 +4,18 @@
 \alias{fcount_meantransform}
 \title{Transform a featurecount output to a data frame of library-normalized mean counts}
 \usage{
-fcount_meantransform(fcoutOutput, samplenames, filterByCount = NULL,
+fcount_meantransform(fcountOutput, samplenames, filterByCount = NULL,
   boxplot = TRUE)
 }
 \arguments{
-\item{fcoutOutput}{Featurecount output in a data frame}
-
 \item{samplenames}{The name of samples (exclusing replicate ID etc). Replicates of the samples
 will be grouped together for calculating mean..}
 
 \item{filterByCount}{A value, if given it will first filter genes by raw mean expression <= given threshold.}
 
 \item{boxplot}{Logical. Draw a boxplot or normalized counts?}
+
+\item{fcoutOutput}{Featurecount output in a data frame}
 }
 \value{
 A data frame of library-normalized mean counts
