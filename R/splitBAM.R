@@ -64,8 +64,9 @@ splitBAM <- function(bamFile, splitby = "strand", chrnameList = NULL, flagList =
 
         if(splitby == "chr"){
                 if(is.null(chrnameList)){
-                        print("Chrname not given for filtering. Splitting file by all chromosomes.")
-                        bam.dat = Rsamtools::scanBam(bamFile, param = Rsamtools::ScanBamParam(what = "rname") )
+                        print("Chrname not given for filtering. Splitting file by all chromosomes. Keeping only mapped reads")
+                        bam.dat = Rsamtools::scanBam(bamFile, param = Rsamtools::ScanBamParam(what = "rname"),
+                                                     flag = scanBamFlag(isUnmappedQuery = FALSE) )
                         chrnameList = unique(as.character(bam.dat[[1]]$rname))
                 }
                 filtfuncs <- lapply(chrnameList,make_FilterFunc_chr)
