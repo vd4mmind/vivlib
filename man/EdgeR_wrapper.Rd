@@ -32,7 +32,8 @@ Output file and Pdf Report of DESeq2 analysis
 A Wrapper for EdgeR over featurecounts output
 }
 \examples{
-EdgeR_wrapper(fcountOutput = "test.out",numReplicates = 4, fdr = 0.01, Output = "edger_output.tab",
-             pdfReport = "edger_report.pdf")
+fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
+EdgeR_wrapper(fcountOutput = fc,numReplicates = 3, fdr = 0.01,
+Output = "edger_output.tsv", pdfReport = "edger_report.pdf")
 }
 

@@ -15,7 +15,7 @@
 #'
 #' @examples
 #'
-#' splitBAM(bam = "test.bam", splitby = "strand", chrnameList = NULL, flagList = NULL,
+#' splitBAM(bam = "test/test_2L2R.bam", splitby = "strand", chrnameList = NULL, flagList = NULL,
 #'              mapqList = NULL, outfile_prefix, nthreads = 20)
 
 splitBAM <- function(bamFile, splitby = "strand", chrnameList = NULL, flagList = NULL,

@@ -25,7 +25,8 @@ annotated output file
 annotate the output file from Differential Expression wrapper
 }
 \examples{
-annotate_DEoutput(DESeqOutput = "test.out", Output = "test_annotated.out", remote = TRUE, genome = "hg38")
+ed <- system.file("extdata", "edger_output.tsv", package="vivlib")
+annotate_DEoutput(DEoutput = ed, Output = "edger_output_annotated.tsv", remote = TRUE, genome = "hg38")
 
 }
 

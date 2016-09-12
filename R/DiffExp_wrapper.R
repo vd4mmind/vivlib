@@ -15,8 +15,9 @@
 #' @export
 #'
 #' @examples
-#' DESeq_wrapper(fcountOutput = "test.out",numReplicates = 4, fdr = 0.01, Output = "deseq_output.tab",
-#'              pdfReport = "deseq_report.pdf")
+#' fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
+#' DESeq_wrapper(fcountOutput = fc,numReplicates = 3, fdr = 0.01,
+#' Output = "deseq_output.tsv", pdfReport = "deseq_report.pdf")
 
 
 DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "deseq_output.tsv",
@@ -119,8 +120,9 @@ DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
 #' @export
 #'
 #' @examples
-#' EdgeR_wrapper(fcountOutput = "test.out",numReplicates = 4, fdr = 0.01, Output = "edger_output.tab",
-#'              pdfReport = "edger_report.pdf")
+#' fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
+#' EdgeR_wrapper(fcountOutput = fc,numReplicates = 3, fdr = 0.01,
+#' Output = "edger_output.tsv", pdfReport = "edger_report.pdf")
 
 
 EdgeR_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "edger_output.tsv",
@@ -217,7 +219,8 @@ EdgeR_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
 #' @export
 #'
 #' @examples
-#' annotate_DEoutput(DESeqOutput = "test.out", Output = "test_annotated.out", remote = TRUE, genome = "hg38")
+#' ed <- system.file("extdata", "edger_output.tsv", package="vivlib")
+#' annotate_DEoutput(DEoutput = ed, Output = "edger_output_annotated.tsv", remote = TRUE, genome = "hg38")
 #'
 
 annotate_DEoutput <- function(DEoutput, Output, remote = TRUE, genome = "hg38", map_file ){

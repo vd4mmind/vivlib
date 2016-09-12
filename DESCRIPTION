@@ -12,6 +12,6 @@ Imports:
 Suggests:
         edgeR
 biocViews: wrappers, rnaseq,  Visualization
-License: GPLv3
+License: GPL 3.0
 LazyData: true
 RoxygenNote: 5.0.1
