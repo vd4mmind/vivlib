@@ -1,7 +1,8 @@
 
-#' Make an informative volcano plot using DESeq2 output
+#' Make an informative volcano plot using edgeR/DESeq2 output
 #'
-#' @param DESeqOutput Tab-seperated DESeq2 output file
+#' @param DEoutput Tab-seperated edgeR/DESeq2 output file, using \code{\link{EdgeR_wrapper}} or
+#'                      \code{\link{DESeq_wrapper}}
 #' @param fdr FDR cutoff for plotting
 #' @param foldChangeLine Where to place a line for a fold change cutoff. Needs two values
 #'                      (for positive andnegative fold change). Default is to plot no line
@@ -15,15 +16,15 @@
 #' @export
 #'
 #' @examples
-#' plotVolcano("DESeqOutput.tab", fdr = 0.05, foldChangeLine = NULL, markGenes = NULL,
+#' plotVolcano("DEoutput.tab", fdr = 0.05, foldChangeLine = NULL, markGenes = NULL,
 #'              colorGenes = NULL, useGeneNames = TRUE, outFile = "volcano.pdf")
 #'
 
-plotVolcano <- function(DESeqOutput, fdr = 0.05, foldChangeLine = NULL, markGenes = NULL,
+plotVolcano <- function(DEoutput, fdr = 0.05, foldChangeLine = NULL, markGenes = NULL,
                         colorGenes = NULL, useGeneNames = TRUE, outFile = NULL) {
 
         # get data and format
-        res_obj <- read.delim(DESeqOutput,header = TRUE, stringsAsFactors = TRUE)
+        res_obj <- read.delim(DEoutput,header = TRUE, stringsAsFactors = TRUE)
 
         if(isTRUE(useGeneNames)){
                 geneID <- res_obj$external_gene_name
@@ -95,9 +96,9 @@ plotVolcano <- function(DESeqOutput, fdr = 0.05, foldChangeLine = NULL, markGene
         # finally, mark genes
         if (!(is.null(markGenes))) {
                 markedata <- plotdata[which(plotdata$geneID %in% markGenes),]
+                points(markedata$log2FoldChange,-log10(markedata$padj), pch = 1, lwd = 3, col = "black")
+                calibrate::textxy(markedata$log2FoldChange, -log10(markedata$padj),markedata$geneID, cex = 0.6)
         }
-        points(markedata$log2FoldChange,-log10(markedata$padj), pch = 1, lwd = 3, col = "black")
-        calibrate::textxy(markedata$log2FoldChange, -log10(markedata$padj),markedata$geneID, cex = 0.6)
 
         if(!is.null(outFile)) {
                 dev.off()
@@ -106,9 +107,10 @@ plotVolcano <- function(DESeqOutput, fdr = 0.05, foldChangeLine = NULL, markGene
 
 
 
-#' Plot heatmap of raw counts for top DEgenes using DESeq2 output
+#' Plot heatmap of raw counts for top DEgenes using edgeR/DESeq2 output
 #'
-#' @param DESeqOutput A tab-seperated DESeq2 output file
+#' @param DEoutput A tab-seperated edgeR/DESeq2 output file, using \code{\link{EdgeR_wrapper}} or
+#'                      \code{\link{DESeq_wrapper}}
 #' @param fdr FDR cutoff for DE genes
 #' @param fcountOutput Featurecounts output (for raw counts)
 #' @param sampleNames samplenames for heatmap column label (must be the same order as in featurecounts file)
@@ -126,12 +128,12 @@ plotVolcano <- function(DESeqOutput, fdr = 0.05, foldChangeLine = NULL, markGene
 #'
 #'
 
-plotHeatmap <- function(DESeqOutput, fdr = 0.05, fcountOutput, sampleNames, topNgenes = 100,
+plotHeatmap <- function(DEoutput, fdr = 0.05, fcountOutput, sampleNames, topNgenes = 100,
                         clusterbyCorr = FALSE, useGeneNames = TRUE, markGenes = NULL,
                         outFile = NA) {
 
         ## read the data and subset it
-        deseqRes <- read.delim(DESeqOutput,header = TRUE)
+        deseqRes <- read.delim(DEoutput,header = TRUE)
         deseqRes <- deseqRes[which(deseqRes$padj < fdr),]
         deseqRes <- deseqRes[order(deseqRes$padj),]
         deseqRes <- deseqRes[!duplicated(deseqRes$Row.names),]
@@ -146,6 +148,8 @@ plotHeatmap <- function(DESeqOutput, fdr = 0.05, fcountOutput, sampleNames, topN
         colnames(fcout) <- sampleNames
 
         ## make heatmap
+        # NOTE : Scaling is not done before clustering, therefore the output looks shitty!
+
         # cluster rows by pearson and cols by spearman
         if(clusterbyCorr){
                 hr <- as.dist(1-cor(t(as.matrix(fcout)), method="pearson"))
@@ -168,9 +172,10 @@ plotHeatmap <- function(DESeqOutput, fdr = 0.05, fcountOutput, sampleNames, topN
 
 
 
-#' Plot Stacked barchart of DE genes using DESeq2 output
+#' Plot Stacked barchart of DE genes using edgeR/DESeq2 output
 #'
-#' @param DESeqOutput A tab-seperated DESeq2 output file
+#' @param DEoutput A tab-seperated edgeR/DESeq2 output file, using \code{\link{EdgeR_wrapper}} or
+#'                      \code{\link{DESeq_wrapper}}
 #' @param fdr FDR cutoff for DE genes
 #' @param foldCh Which scale of fold-change to plot. Choose from "abs" (absolute)
 #'                      and "log2" (log2).
@@ -184,9 +189,9 @@ plotHeatmap <- function(DESeqOutput, fdr = 0.05, fcountOutput, sampleNames, topN
 #'
 #'
 
-plotStackedBars <- function(DESeqOutput, fdr = 0.05, foldCh = "abs", sampleName = NULL, outFile = NULL) {
+plotStackedBars <- function(DEoutput, fdr = 0.05, foldCh = "abs", sampleName = NULL, outFile = NULL) {
 
-        deseqRes <- read.delim(DESeqOutput,header = TRUE)
+        deseqRes <- read.delim(DEoutput,header = TRUE)
 
         # subset by fdr
         deseqRes <- deseqRes[which(deseqRes$padj < fdr),]
@@ -229,9 +234,10 @@ plotStackedBars <- function(DESeqOutput, fdr = 0.05, foldCh = "abs", sampleName 
 }
 
 
-#' Plot DESeq2 output on a selected KEGG pathway map
+#' Plot DE output on a selected KEGG pathway map
 #'
-#' @param DESeqOutput A tab-seperated DESeq2 output file
+#' @param DEoutput A tab-seperated edgeR/DESeq2 output file, using \code{\link{EdgeR_wrapper}} or
+#'                      \code{\link{DESeq_wrapper}}
 #' @param fdr FDR cutoff for Diff-Exp genes.
 #' @param pathway_IDs KEGG ids for the pathways to plot
 #' @param genome Select from hg38, mm10, dm6. (although it's agnostic to genome versions in general).
@@ -243,9 +249,9 @@ plotStackedBars <- function(DESeqOutput, fdr = 0.05, foldCh = "abs", sampleName 
 #'
 #'
 
-plotPathway <- function(DESeqOutput, fdr = 0.05, pathway_IDs = c("05200","04110"), genome = "hg38"){
+plotPathway <- function(DEoutput, fdr = 0.05, pathway_IDs = c("05200","04110"), genome = "hg38"){
 
-        deOut <- read.delim(DESeqOutput)
+        deOut <- read.delim(DEoutput)
         # subset DEgenes and get kegg names for the genes
         deOut <- deOut[which(deOut$padj < fdr), c("Row.names","log2FoldChange","external_gene_name")]
 
@@ -261,19 +267,19 @@ plotPathway <- function(DESeqOutput, fdr = 0.05, pathway_IDs = c("05200","04110"
 
         message("fetching annotation")
         tofetch <- dplyr::filter(genomes,id == genome)$path
-        ensembl = biomaRt::useMart("ensembl",tofetch)
+        ensembl <- biomaRt::useMart("ensembl",tofetch)
 
         ext.data <- biomaRt::getBM(attributes = c("ensembl_gene_id","entrezgene"),filters = "ensembl_gene_id",
                                    values = deOut$Row.names, mart = ensembl)
         deOut <- merge(deOut,ext.data, by = 1, all.x = TRUE)
         deOut <- deOut[!(duplicated(deOut$entrezgene)),]
         deOut <- na.omit(deOut)
-        deOut <- as.data.frame(deOut[,2], row.names = deOut$entrezgene)
+        deOut <- as.data.frame(deOut[,2], row.names = as.character(deOut$entrezgene))
         colnames(deOut) <- "logFC"
 
         ## plot selected pathways
         org <- dplyr::filter(genomes,id == genome)$keggname
-        print("colorScale saved as : ",getwd(),"/colorScale.pdf")
+        print(paste0("colorScale saved as : ",getwd(),"/colorScale.pdf") )
         pdf("colorScale.pdf")
         col <- KEGGprofile::col_by_value(deOut, col = colorRampPalette(c("red", "grey50", "navyblue"))(1024),
                                          range = c(-6, 6))

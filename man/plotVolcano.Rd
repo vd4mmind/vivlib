@@ -2,14 +2,14 @@
 % Please edit documentation in R/plotting_wrappers.R
 \name{plotVolcano}
 \alias{plotVolcano}
-\title{Make an informative volcano plot using DESeq2 output}
+\title{Make an informative volcano plot using edgeR/DESeq2 output}
 \usage{
-plotVolcano(DESeqOutput, fdr = 0.05, foldChangeLine = NULL,
-  markGenes = NULL, colorGenes = NULL, useGeneNames = TRUE,
-  outFile = NULL)
+plotVolcano(DEoutput, fdr = 0.05, foldChangeLine = NULL, markGenes = NULL,
+  colorGenes = NULL, useGeneNames = TRUE, outFile = NULL)
 }
 \arguments{
-\item{DESeqOutput}{Tab-seperated DESeq2 output file}
+\item{DEoutput}{Tab-seperated edgeR/DESeq2 output file, using \code{\link{EdgeR_wrapper}} or
+\code{\link{DESeq_wrapper}}}
 
 \item{fdr}{FDR cutoff for plotting}
 
@@ -29,10 +29,10 @@ has been annotated by \code{\link{annotate_DEoutput}} function.}
 A pdf file with volcano plot
 }
 \description{
-Make an informative volcano plot using DESeq2 output
+Make an informative volcano plot using edgeR/DESeq2 output
 }
 \examples{
-plotVolcano("DESeqOutput.tab", fdr = 0.05, foldChangeLine = NULL, markGenes = NULL,
+plotVolcano("DEoutput.tab", fdr = 0.05, foldChangeLine = NULL, markGenes = NULL,
              colorGenes = NULL, useGeneNames = TRUE, outFile = "volcano.pdf")
 
 }

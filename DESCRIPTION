@@ -8,7 +8,7 @@ Depends:
     R (>= 3.2.2)
 Imports:
         dplyr, assertthat, ggplot2, tidyr, pheatmap, reshape2, calibrate, gplots, RColorBrewer, dendextend, UpSetR,
-        biomaRt, DESeq2, limma,  GenomicFeatures, S4Vectors, BiocParallel, Rsamtools, SPIA
+        biomaRt, DESeq2, limma,  GenomicFeatures, S4Vectors, BiocParallel, Rsamtools, SPIA, KEGGprofile
 Suggests:
         edgeR
 biocViews: wrappers, rnaseq,  Visualization

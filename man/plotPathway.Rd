@@ -2,13 +2,14 @@
 % Please edit documentation in R/plotting_wrappers.R
 \name{plotPathway}
 \alias{plotPathway}
-\title{Plot DESeq2 output on a selected KEGG pathway map}
+\title{Plot DE output on a selected KEGG pathway map}
 \usage{
-plotPathway(DESeqOutput, fdr = 0.05, pathway_IDs = c("05200", "04110"),
+plotPathway(DEoutput, fdr = 0.05, pathway_IDs = c("05200", "04110"),
   genome = "hg38")
 }
 \arguments{
-\item{DESeqOutput}{A tab-seperated DESeq2 output file}
+\item{DEoutput}{A tab-seperated edgeR/DESeq2 output file, using \code{\link{EdgeR_wrapper}} or
+\code{\link{DESeq_wrapper}}}
 
 \item{fdr}{FDR cutoff for Diff-Exp genes.}
 
@@ -20,7 +21,7 @@ plotPathway(DESeqOutput, fdr = 0.05, pathway_IDs = c("05200", "04110"),
 KEGG plot
 }
 \description{
-Plot DESeq2 output on a selected KEGG pathway map
+Plot DE output on a selected KEGG pathway map
 }
 \examples{
 

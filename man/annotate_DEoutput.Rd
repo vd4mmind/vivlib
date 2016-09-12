@@ -4,12 +4,10 @@
 \alias{annotate_DEoutput}
 \title{annotate the output file from Differential Expression wrapper}
 \usage{
-annotate_DEoutput(DESeqOutput, Output, remote = TRUE, genome = "hg38",
+annotate_DEoutput(DEoutput, Output, remote = TRUE, genome = "hg38",
   map_file)
 }
 \arguments{
-\item{DESeqOutput}{Tab-seperated output file from \code{\link{EdgeR_wrapper}} or \code{\link{DESeq_wrapper}}}
-
 \item{Output}{Annotated output file name}
 
 \item{remote}{Whether use biomart to annotate file}
@@ -17,6 +15,8 @@ annotate_DEoutput(DESeqOutput, Output, remote = TRUE, genome = "hg38",
 \item{genome}{When remote = TRUE, which genome to use (available = "hg38","mm10","dm6")}
 
 \item{map_file}{If remote = FALSE, provide a map file (with ENS id and Gene id in column 1 and 2) respectively}
+
+\item{DESeqOutput}{Tab-seperated output file from \code{\link{EdgeR_wrapper}} or \code{\link{DESeq_wrapper}}}
 }
 \value{
 annotated output file

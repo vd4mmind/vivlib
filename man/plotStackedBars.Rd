@@ -2,13 +2,14 @@
 % Please edit documentation in R/plotting_wrappers.R
 \name{plotStackedBars}
 \alias{plotStackedBars}
-\title{Plot Stacked barchart of DE genes using DESeq2 output}
+\title{Plot Stacked barchart of DE genes using edgeR/DESeq2 output}
 \usage{
-plotStackedBars(DESeqOutput, fdr = 0.05, foldCh = "abs",
-  sampleName = NULL, outFile = NULL)
+plotStackedBars(DEoutput, fdr = 0.05, foldCh = "abs", sampleName = NULL,
+  outFile = NULL)
 }
 \arguments{
-\item{DESeqOutput}{A tab-seperated DESeq2 output file}
+\item{DEoutput}{A tab-seperated edgeR/DESeq2 output file, using \code{\link{EdgeR_wrapper}} or
+\code{\link{DESeq_wrapper}}}
 
 \item{fdr}{FDR cutoff for DE genes}
 
@@ -23,7 +24,7 @@ and "log2" (log2).}
 Stacked bar chart of DE gene counts.
 }
 \description{
-Plot Stacked barchart of DE genes using DESeq2 output
+Plot Stacked barchart of DE genes using edgeR/DESeq2 output
 }
 \examples{
 

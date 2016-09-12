@@ -2,14 +2,15 @@
 % Please edit documentation in R/plotting_wrappers.R
 \name{plotHeatmap}
 \alias{plotHeatmap}
-\title{Plot heatmap of raw counts for top DEgenes using DESeq2 output}
+\title{Plot heatmap of raw counts for top DEgenes using edgeR/DESeq2 output}
 \usage{
-plotHeatmap(DESeqOutput, fdr = 0.05, fcountOutput, sampleNames,
+plotHeatmap(DEoutput, fdr = 0.05, fcountOutput, sampleNames,
   topNgenes = 100, clusterbyCorr = FALSE, useGeneNames = TRUE,
   markGenes = NULL, outFile = NA)
 }
 \arguments{
-\item{DESeqOutput}{A tab-seperated DESeq2 output file}
+\item{DEoutput}{A tab-seperated edgeR/DESeq2 output file, using \code{\link{EdgeR_wrapper}} or
+\code{\link{DESeq_wrapper}}}
 
 \item{fdr}{FDR cutoff for DE genes}
 
@@ -32,7 +33,7 @@ has been annotated by \code{\link{annotate_DEoutput}} function.}
 A heatmap.
 }
 \description{
-Plot heatmap of raw counts for top DEgenes using DESeq2 output
+Plot heatmap of raw counts for top DEgenes using edgeR/DESeq2 output
 }
 \examples{
 

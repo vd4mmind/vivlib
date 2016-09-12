@@ -69,7 +69,7 @@ DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
 
         ## take out cooks distance statistics for outlier detection
         W <- ddr$stat
-        maxCooks <- apply(assays(dds)[["cooks"]],1,max)
+        maxCooks <- apply(SummarizedExperiment::assays(dds)[["cooks"]],1,max)
         idx <- !is.na(W)
         m <- ncol(dds)
         p <- 3
@@ -198,7 +198,8 @@ EdgeR_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
         )
 
         dev.off()
-
+        # Changing the column names so that other functions built for DESeq output can use them
+        colnames(ddr.df) <- c("log2FoldChange","logCPM","F","pvalue","padj")
         write.table(ddr.df,file = Output,sep = "\t",quote = FALSE)
         save(y, fit , file = paste0(Output,"_edgeR.Rdata"))
 }
@@ -219,9 +220,9 @@ EdgeR_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
 #' annotate_DEoutput(DESeqOutput = "test.out", Output = "test_annotated.out", remote = TRUE, genome = "hg38")
 #'
 
-annotate_DEoutput <- function(DESeqOutput, Output, remote = TRUE, genome = "hg38", map_file ){
+annotate_DEoutput <- function(DEoutput, Output, remote = TRUE, genome = "hg38", map_file ){
 
-        seqout <- read.delim(DESeqOutput,header = TRUE)
+        seqout <- read.delim(DEoutput,header = TRUE)
         if(remote == TRUE) {
                 genomes = data.frame(id = c("hg38","mm10","dm6"),
                                      path = c("hsapiens_gene_ensembl",
@@ -232,7 +233,7 @@ annotate_DEoutput <- function(DESeqOutput, Output, remote = TRUE, genome = "hg38
                 assertthat::assert_that(genome %in% genomes$id)
                 message("fetching annotation")
                 tofetch <- dplyr::filter(genomes,id == genome)$path
-                ensembl = biomaRt::useMart("ensembl",tofetch)
+                ensembl <- biomaRt::useMart("ensembl",tofetch)
                 ext.data <- biomaRt::getBM(attributes = c("ensembl_gene_id","external_gene_name","description"),
                                            mart = ensembl)
                 message("merging and writing")
