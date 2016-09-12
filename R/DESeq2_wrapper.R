@@ -58,15 +58,14 @@ DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
 
         ## select top DE genes for heatmap
         rld <- DESeq2::rlog(dds)
-        decounts <- DESeq2::counts(dds,normalized=TRUE)
-        decounts <- merge(decounts,df.filt,by=0)
 
         # order by fold change (by abs foldch if only few top genes requested)
-        select <- order(abs(decounts$log2FoldChange), decreasing=TRUE)
+        select <- order(abs(df.filt$log2FoldChange), decreasing=TRUE)
         if(heatmap_topN != "all"){
                 select <- select[1:heatmap_topN]
         }
-        data <- SummarizedExperiment::assay(rld)[select,]
+        names <- rownames(df.filt)[select]
+        data <- SummarizedExperiment::assay(rld)[names,]
 
         ## take out cooks distance statistics for outlier detection
         W <- ddr$stat
@@ -103,8 +102,6 @@ DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
         write.table(ddr.df,file = Output,sep = "\t",quote = FALSE)
         save(dds,ddr, file = paste0(Output,"_DESeq.Rdata"))
 }
-
-
 
 
 #' annotate DESeq2 Output file
