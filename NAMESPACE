@@ -2,6 +2,7 @@
 
 export(Camera_plotbubble)
 export(DESeq_wrapper)
+export(EdgeR_wrapper)
 export(annotate_DESeqOutput)
 export(clusterDEgenes)
 export(fcount_meantransform)
