@@ -3,7 +3,7 @@ Vivek Bhardwaj
 
 ## Useful functions and wrappers around RNAseq analysis
 
-vivlib is a set of useful functions built around RNA-Seq analysis focussed on featurecounts and DESeq2. It includes exploring featurecounts output, performing DESeq2 and annotating the outputs and some downstream analysis. Some useful operations on BAM files and bed files are also included.
+vivlib is a set of useful functions built around RNA-Seq analysis focussed on featurecounts and edgeR/DESeq2. It includes exploring featurecounts output, performing edgeR/DESeq2, annotating the outputs and some downstream analysis. Some useful operations on BAM files and bed files are also included.
 
 ### Installation
 
