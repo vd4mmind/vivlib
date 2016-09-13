@@ -227,18 +227,7 @@ annotate_DEoutput <- function(DEoutput, Output, remote = TRUE, genome = "hg38", 
 
         seqout <- read.delim(DEoutput,header = TRUE)
         if(remote == TRUE) {
-                genomes = data.frame(id = c("hg38","mm10","dm6"),
-                                     path = c("hsapiens_gene_ensembl",
-                                              "mmusculus_gene_ensembl",
-                                              "dmelanogaster_gene_ensembl"),
-                                     stringsAsFactors = FALSE)
-
-                assertthat::assert_that(genome %in% genomes$id)
-                message("fetching annotation")
-                tofetch <- dplyr::filter(genomes,id == genome)$path
-                ensembl <- biomaRt::useMart("ensembl",tofetch)
-                ext.data <- biomaRt::getBM(attributes = c("ensembl_gene_id","external_gene_name","description"),
-                                           mart = ensembl)
+                ext.data <- fetch_annotation(genome)
                 message("merging and writing")
                 outfile <- merge(seqout,ext.data,by.x = 0,by.y = 1,all.x = TRUE)
                 write.table(outfile,Output,sep="\t", row.names = FALSE,quote=FALSE)

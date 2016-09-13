@@ -41,7 +41,9 @@ and a microarry (affy) input from human or mouse. That's why the option to provi
 But if you don't want that, you can simply use it to compare any set of microarry outputs to any voom-transformed input.
 }
 \examples{
-plotBarCodes(GSEfile,ourVoomFile)
+\dontrun{
+     plotBarCodes(GSEfile,ourVoomFile)
+}
 
 }
 

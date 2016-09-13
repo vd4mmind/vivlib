@@ -32,7 +32,8 @@ A pdf file with volcano plot
 Make an informative volcano plot using edgeR/DESeq2 output
 }
 \examples{
-plotVolcano("DEoutput.tab", fdr = 0.05, foldChangeLine = NULL, markGenes = NULL,
+deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
+plotVolcano(deout, fdr = 0.05, foldChangeLine = NULL, markGenes = NULL,
              colorGenes = NULL, useGeneNames = TRUE, outFile = "volcano.pdf")
 
 }

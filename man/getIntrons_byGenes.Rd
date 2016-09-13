@@ -26,8 +26,8 @@ Get introns by genes
 }
 \examples{
 library(TxDb.Hsapiens.UCSC.hg38.knownGene)
-
-getIntrons_byGenes(txdb = TxDb.Hsapiens.UCSC.hg38.knownGene, seqout = "DESeq_outputs/XR1_annotated.out",
+deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
+getIntrons_byGenes(txdb = TxDb.Hsapiens.UCSC.hg38.knownGene, seqout = deout,
 padjFilter = 0.05, genome_mart = "hsapiens_gene_ensembl", outfile = "annotated_introns.out")
 
 }

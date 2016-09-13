@@ -4,11 +4,12 @@
 \alias{spia_wrapper}
 \title{A wrapper over SPIA pathway perturbation analysis for mouse and human}
 \usage{
-spia_wrapper(DESeqOutput, organism = "mmu", padjCutoff, outFile,
+spia_wrapper(DEoutput, organism = "mmu", padjCutoff = 0.05, outFile,
   outPlot = NULL)
 }
 \arguments{
-\item{DESeqOutput}{Tab-seperated DESeq2 output file}
+\item{DEoutput}{A tab-seperated edgeR/DESeq2 output file, using \code{\link{EdgeR_wrapper}} or
+\code{\link{DESeq_wrapper}}}
 
 \item{organism}{select from "mmu" (mouse) or "hsa" (human)}
 
@@ -25,7 +26,8 @@ a txt file and a pdf file
 A wrapper over SPIA pathway perturbation analysis for mouse and human
 }
 \examples{
-
+deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
+spia_wrapper <- function(DEoutput = deout, organism = "mmu", outFile = "edgeR_spia.txt")
 
 }
 

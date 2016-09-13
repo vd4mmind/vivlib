@@ -16,7 +16,8 @@
 #' @export
 #'
 #' @examples
-#' plotVolcano("DEoutput.tab", fdr = 0.05, foldChangeLine = NULL, markGenes = NULL,
+#' deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
+#' plotVolcano(deout, fdr = 0.05, foldChangeLine = NULL, markGenes = NULL,
 #'              colorGenes = NULL, useGeneNames = TRUE, outFile = "volcano.pdf")
 #'
 
@@ -125,7 +126,9 @@ plotVolcano <- function(DEoutput, fdr = 0.05, foldChangeLine = NULL, markGenes =
 #' @export
 #'
 #' @examples
-#'
+#' deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
+#' fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
+#' plotHeatmap(DEoutput = deout, fcountOutput = fc, sampleNames = rep(c("cnt","KD"), each = 3))
 #'
 
 plotHeatmap <- function(DEoutput, fdr = 0.05, fcountOutput, sampleNames, topNgenes = 100,
@@ -186,7 +189,8 @@ plotHeatmap <- function(DEoutput, fdr = 0.05, fcountOutput, sampleNames, topNgen
 #' @export
 #'
 #' @examples
-#'
+#' deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
+#' plotStackedBars <- function(DEoutput = deout)
 #'
 
 plotStackedBars <- function(DEoutput, fdr = 0.05, foldCh = "abs", sampleName = NULL, outFile = NULL) {
@@ -246,7 +250,8 @@ plotStackedBars <- function(DEoutput, fdr = 0.05, foldCh = "abs", sampleName = N
 #' @export
 #'
 #' @examples
-#'
+#' deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
+#' plotPathway(DEoutput = deout, fdr = 0.05, pathway_IDs = "05200", genome = "mm10")
 #'
 
 plotPathway <- function(DEoutput, fdr = 0.05, pathway_IDs = c("05200","04110"), genome = "hg38"){

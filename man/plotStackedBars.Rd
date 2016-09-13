@@ -27,7 +27,8 @@ Stacked bar chart of DE gene counts.
 Plot Stacked barchart of DE genes using edgeR/DESeq2 output
 }
 \examples{
-
+deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
+plotStackedBars <- function(DEoutput = deout)
 
 }
 

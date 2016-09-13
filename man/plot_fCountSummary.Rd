@@ -20,7 +20,8 @@ A plot of featurecounts summary in a pdf file
 Plot the output of featureCounts summary
 }
 \examples{
-plot_fCountSummary(test.summary,"/long/path/to/cut")
+fcsum <- system.file("extdata", "test_fcountsummary.tsv", package="vivlib")
+plot_fCountSummary(fcsum,"/long/path/")
 
 }
 

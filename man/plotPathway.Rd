@@ -24,7 +24,8 @@ KEGG plot
 Plot DE output on a selected KEGG pathway map
 }
 \examples{
-
+deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
+plotPathway(DEoutput = deout, fdr = 0.05, pathway_IDs = "05200", genome = "mm10")
 
 }
 

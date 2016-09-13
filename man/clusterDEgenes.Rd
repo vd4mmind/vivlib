@@ -41,8 +41,8 @@ genes sorted by clustered output, and text file with genes divided by clusters
 Cluster DE genes by fold change from multiple files
 }
 \examples{
-
+\dontrun{
 clusterDEgenes(DEoutList, sampleNames, FDRcutoff = 0.05, method = "correlation")
-
+}
 }
 

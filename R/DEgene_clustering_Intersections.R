@@ -27,9 +27,9 @@
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
 #' clusterDEgenes(DEoutList, sampleNames, FDRcutoff = 0.05, method = "correlation")
-#'
+#' }
 
 clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "correlation",
                            cut_cluster = NA, row_annotation = NULL, keepNAs = TRUE, outFile_prefix = NULL) {
@@ -154,8 +154,9 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' plotDEgeneOverlap(DEoutList, sampleNames, FDRcutoff = 0.05, outFile = NULL)
-#'
+#' }
 
 plotDEgeneOverlap <- function(DEoutList, sampleNames, FDRcutoff = 0.05, outFile = NULL){
         dedata <- lapply(DEoutList, function(x){

@@ -11,7 +11,8 @@
 #' @export
 #'
 #' @examples
-#' plot_fCountSummary(test.summary,"/long/path/to/cut")
+#' fcsum <- system.file("extdata", "test_fcountsummary.tsv", package="vivlib")
+#' plot_fCountSummary(fcsum,"/long/path/")
 #'
 
 
@@ -50,7 +51,9 @@ plot_fCountSummary <- function(summaryFile, CutFromHeader, outFile = NULL){
 #' @export
 #'
 #' @examples
-#'fcount_meantransform(fcoutOutput, samplenames, filterByCount = 1000, boxplot = TRUE)
+#' fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
+#' samples <- rep(c("cnt","KD"), each = 3)
+#' fcount_meantransform(fcoutOutput = fc, samplenames = samples, filterByCount = 1000, boxplot = TRUE)
 #'
 
 fcount_meantransform <- function(fcountOutput, samplenames, filterByCount = NULL, boxplot = TRUE){

@@ -2,7 +2,8 @@
 
 #' A wrapper over SPIA pathway perturbation analysis for mouse and human
 #'
-#' @param DESeqOutput Tab-seperated DESeq2 output file
+#' @param DEoutput A tab-seperated edgeR/DESeq2 output file, using \code{\link{EdgeR_wrapper}} or
+#'                      \code{\link{DESeq_wrapper}}
 #' @param organism select from "mmu" (mouse) or "hsa" (human)
 #' @param padjCutoff FDR cutoff for the genes to include in the list
 #' @param outFile output file to write affected pathways
@@ -12,10 +13,11 @@
 #' @export
 #'
 #' @examples
+#' deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
+#' spia_wrapper <- function(DEoutput = deout, organism = "mmu", outFile = "edgeR_spia.txt")
 #'
-#'
-spia_wrapper <- function(DESeqOutput, organism = "mmu", padjCutoff, outFile, outPlot = NULL){
-        df <- read.table(DESeqOutput, sep= "\t", header = TRUE, quote = "" )
+spia_wrapper <- function(DEoutput, organism = "mmu", padjCutoff = 0.05, outFile, outPlot = NULL){
+        df <- read.table(DEoutput, sep= "\t", header = TRUE, quote = "" )
         # load corresponding lib
         orgmap <- data.frame(org = c("mmu","hsa"), db = c("org.Mm.eg.db","org.Hs.eg.db"),stringsAsFactors = FALSE)
         assertthat::assert_that(organism %in% orgmap$org)
@@ -45,10 +47,10 @@ spia_wrapper <- function(DESeqOutput, organism = "mmu", padjCutoff, outFile, out
         colnames(top) <- c("TOP PATHWAYS : NAME",colnames(top[2:7]))
 
         # Write output
-        if(!is.null(outFile)) pdf(outPlot)
+        if(!is.null(outPlot)) pdf(outPlot)
         SPIA::plotP(spia.degenes)
         gplots::textplot(top)
-        if(!is.null(outFile)) dev.off()
+        if(!is.null(outPlot)) dev.off()
 
         write.table(spia.degenes,outFile, sep = "\t", quote = FALSE, row.names = FALSE)
 }
@@ -70,7 +72,9 @@ spia_wrapper <- function(DESeqOutput, organism = "mmu", padjCutoff, outFile, out
 #' @export
 #'
 #' @examples
-#' spia_plotBubble(spia_wrapper_output, outfileName = "test.out, top = 20, title = "test plot)
+#' deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
+#' spia_wrapper <- function(DEoutput = deout, organism = "mmu", outFile = "edgeR_spia.txt")
+#' spia_plotBubble(SPIAout = "edgeR_spia.txt", outfileName = "SPIAplots.out, top = 20, title = "SPIA plot)
 #'
 
 spia_plotBubble <- function(SPIAout,outfileName = NULL, top = 20, plotType = 1, title = NULL){

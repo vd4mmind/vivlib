@@ -4,19 +4,16 @@
 \alias{makeVoomInput}
 \title{Make Voom transformed input for BarCodePlot and ROAST test}
 \usage{
-makeVoomInput(counts, design, bmGeneNames, name = "name")
+makeVoomInput(fcountOutput, design, genome = "mm10", bmGeneNames,
+  plotFile = NULL)
 }
 \arguments{
-\item{counts}{A tab-seperated file containing gene names followed by counts}
+\item{fcountOutput}{A featurecounts output file}
 
-\item{design}{A tab-seperated file containing design information (colnames, condition).
-colnames should correspond to columns in count file and condition could be
-control/test or any set of factors.}
+\item{design}{A data frame containing design information. rownames should correspond to columns in count file and
+column could be control/test or any set of factors.}
 
-\item{bmGeneNames}{Optionally provide alternative gene symbols downloaded from biomart as a
-tab-seperated file. The columns should be ("ensembl_gene_id","external_gene_id")}
-
-\item{name}{File name to output filtering plots.}
+\item{plotFile}{File name to output filtering plots (.pdf).}
 }
 \value{
 A plot (as pdf) and a voom transformed output as list.
@@ -25,7 +22,10 @@ A plot (as pdf) and a voom transformed output as list.
 Make Voom transformed input for BarCodePlot and ROAST test
 }
 \examples{
-makeVoomInput(counts,design,bmGeneNames,name="name")
+fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
+design <- data.frame(rownames = c(paste0("cnt_", 1:3), paste0("KD_",1:3)),
+                     condition = rep(c("cnt","KD"), each = 3) )
+makeVoomInput(fcountOutput = fc, design = design, plotFile = "test.pdf")
 
 }
 

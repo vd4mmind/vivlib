@@ -29,8 +29,9 @@ Splitted, sorted and indexed bam files
 Split a bam file by given criteria
 }
 \examples{
-
-splitBAM(bam = "test/test_2L2R.bam", splitby = "strand", chrnameList = NULL, flagList = NULL,
+bam <- system.file("extdata", "test_2L2R.bam", package="vivlib")
+splitBAM(bam = bam, splitby = "chr", chrnameList = NULL, flagList = NULL,
              mapqList = NULL, outfile_prefix, nthreads = 20)
+
 }
 

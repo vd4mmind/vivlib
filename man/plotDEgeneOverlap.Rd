@@ -22,7 +22,8 @@ A plot of Intersection of gene sets.
 plot intersections of list of DE genes from multiple DESeq2 outputs
 }
 \examples{
+\dontrun{
 plotDEgeneOverlap(DEoutList, sampleNames, FDRcutoff = 0.05, outFile = NULL)
-
+}
 }
 
