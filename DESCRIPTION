@@ -1,6 +1,6 @@
 Package: vivlib
 Title: An R package for useful bioinformatics wrappers
-Version: 0.0.1
+Version: 1.0.0
 Author: Vivek Bhardwaj, <bhardwaj@ie-freiburg.mpg.de>
 Maintainer: Vivek Bhardwaj, <bhardwaj@ie-freiburg.mpg.de>
 Description: An R package for useful wrappers the are used quite often by me (vivekbhr) for my analysis.

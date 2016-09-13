@@ -1,9 +1,14 @@
-# vivlib
-Vivek Bhardwaj  
+==========================================================
+vivlib
+==========================================================
+
+*by @vivekbhr*
+
+[![Build Status](https://travis-ci.org/vivekbhr/vivlib.svg?branch=master)](https://travis-ci.org/vivekbhr/vivlib)
 
 ## Useful functions and wrappers around RNAseq analysis
 
-vivlib is a set of useful functions built around RNA-Seq analysis focussed on featurecounts and edgeR/DESeq2. It includes exploring featurecounts output, performing edgeR/DESeq2, annotating the outputs and some downstream analysis. Some useful operations on BAM files and bed files are also included.
+*vivlib* is a set of useful functions built around RNA-Seq analysis built around featureCounts and edgeR/DESeq2. It includes exploring featureCounts output, performing edgeR/DESeq2, annotating the outputs and some downstream analysis. Some useful operations on BAM files and bed files are also included.
 
 ### Installation
 
@@ -19,16 +24,13 @@ biocLite("vivekbhr/vivlib")
 
 ### Functions
 
-**DISCLAIMER : I keep updating/adding the functions in this package without making any new releases.**
-
-For the updated set of functions, install vivlib and do :
-
+To get a list of available functions, install vivlib and do :
 
 ```r
 library(vivlib)
 ls(pos = "package:vivlib")
 ```
 
-### Final Disclaimer
+### Disclaimer
 
-Internal testing and version increments for this package is not being done. So use it at your own risk!
+Although most functions in the latest release have been tested, the package is always under active (but infrequent) development.
