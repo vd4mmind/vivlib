@@ -8,7 +8,7 @@ vivlib
 
 ## Useful functions and wrappers around RNAseq analysis
 
-*vivlib* is a set of useful functions built around RNA-Seq analysis built around featureCounts and edgeR/DESeq2. It includes exploring featureCounts output, performing edgeR/DESeq2, annotating the outputs and some downstream analysis. Some useful operations on BAM files and bed files are also included.
+*vivlib* is a set of useful functions for RNA-Seq analysis built around featureCounts and edgeR/DESeq2. It includes exploring featureCounts output, performing edgeR/DESeq2, annotating the outputs and some downstream analysis. Some useful operations on BAM files and bed files are also included.
 
 ### Installation
 
