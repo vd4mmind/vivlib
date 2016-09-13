@@ -1,59 +1,54 @@
 
 #' Make Voom transformed input for BarCodePlot and ROAST test
 #'
-#' @param counts A tab-seperated file containing gene names followed by counts
-#' @param design A tab-seperated file containing design information (colnames, condition).
-#'                      colnames should correspond to columns in count file and condition could be
-#'                      control/test or any set of factors.
-#' @param bmGeneNames Optionally provide alternative gene symbols downloaded from biomart as a
-#'                      tab-seperated file. The columns should be ("ensembl_gene_id","external_gene_id")
-#' @param name File name to output filtering plots.
+#' @param fcountOutput A featurecounts output file
+#' @param design A data frame containing design information. rownames should correspond to columns in count file and
+#'               column could be control/test or any set of factors.
+#' @param plotFile File name to output filtering plots (.pdf).
 #'
 #' @return A plot (as pdf) and a voom transformed output as list.
 #' @export
 #'
 #' @examples
-#'makeVoomInput(counts,design,bmGeneNames,name="name")
+#' fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
+#' design <- data.frame(rownames = c(paste0("cnt_", 1:3), paste0("KD_",1:3)),
+#'                      condition = rep(c("cnt","KD"), each = 3) )
+#' makeVoomInput(fcountOutput = fc, design = design, plotFile = "test.pdf")
 #'
 
-makeVoomInput <- function(counts,design,bmGeneNames,name="name"){
+makeVoomInput <- function(fcountOutput, design, genome = "mm10", bmGeneNames,plotFile = NULL){
 
-  # get gene count data
-  counts <- read.table(counts, header = T, row.names = 1)
-  rownames(counts) = gsub('(ENS.*)\\.[0-9]*','\\1',rownames(counts))
-  # filter by rowmean
-  means = rowMeans(counts)
-  counts = counts[which(means > 1),]
+        # get featurecount data
+        fcountOutput <- read.delim(fcountOutput, header = T, row.names = 1)
+        fcountOutput <-  fcountOutput[,c(6:ncol(fcountOutput))]
+        rownames(fcountOutput) = gsub('(ENS.*)\\.[0-9]*','\\1',rownames(fcountOutput))# remove extra dots from gencode
+        # filter by rowmean
+        means = rowMeans(fcountOutput)
+        fcountOutput = fcountOutput[which(means > 1),]
 
-  # add gene names from biomart file
-  
-  bmGeneNames = read.table(bmGeneNames,sep="\t", header=TRUE, row.names=1)
-  matchingIds = merge(counts, bmGeneNames,
-                      by.x = 0,
-                      by.y = "ensembl_gene_id",
-                      all.x = TRUE)
-  matchingIds = matchingIds[c("Row.names","external_gene_id")]
+        # add gene names from biomart file
+        ext.data <- fetch_annotation(genome)
+        fcountOutputMerged <- merge(fcountOutput, ext.data, by.x = 0, by.y = 1, all.x = TRUE, sort = FALSE)
+        # get design matrix for voom
+        colnames(design) <- "condition"
+        design <- model.matrix(~ condition, design)
 
-  # get design matrix for voom
-  design <- read.table(design, header=T)
-  design <- model.matrix(~ condition, design)
+        # voom
+        y <- limma::voom(fcountOutput,design)
+        y$Gene = tolower(as.character(fcountOutputMerged$external_gene_name))
+        fit <- limma::lmFit(y, design = design)
+        fit <- limma::eBayes(fit)
+        voomOutput <- list(y = y, fit = fit)
 
-  # voom
-  y <- limma::voom(counts,design)
-  y$Gene = tolower(as.character(matchingIds$external_gene_id))
-  fit <- limma::lmFit(y, design = design)
-  fit <- limma::eBayes(fit)
-  voomOutput <- list(y = y, fit = fit)
+        # make plots of filtering
+        pdf(plotFile)
+        boxplot(log2(fcountOutput),notch = TRUE,col="steelblue",cex.names=0.5,main="Log fcountOutput after filtering")
+        gplots::textplot(paste0("Number of genes after filtering : ",nrow(fcountOutput)))
+        hist(fit$t[,2],col="steelblue",xlab="Range of test-statistic",
+             main="Distribution of test statistics post-filtering")
+        dev.off()
 
-  # make plots of filtering
-  pdf(paste0(name,"filtering_plots.pdf"))
-  boxplot(log2(counts),notch = TRUE,col="steelblue",cex.names=0.5,main="Log Counts after filtering")
-  textplot(paste0("Number of genes after filtering : ",nrow(counts)))
-  hist(fit$t[,"conditiontreatment"],col="steelblue",xlab="Range of test-statistic",
-       main="Distribution of test statistics post-filtering")
-  dev.off()
-
-  return(voomOutput)
+        return(voomOutput)
 }
 
 
@@ -80,7 +75,9 @@ makeVoomInput <- function(counts,design,bmGeneNames,name="name"){
 #' @export
 #'
 #' @examples
-#'plotBarCodes(GSEfile,ourVoomFile)
+#' \dontrun{
+#'      plotBarCodes(GSEfile,ourVoomFile)
+#' }
 #'
 
 plotBarCodes <- function(GSEfile,ourVoomFile, batchAnalyse=TRUE, VoomInputName=NULL,

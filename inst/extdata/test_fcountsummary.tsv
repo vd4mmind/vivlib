@@ -1,0 +1,12 @@
+Status	/long/path/cont_1.bam	/long/path/cont_2.bam	/long/path/cont_3.bam	/long/path/KD_1.bam	/long/path/KD_2.bam	/long/path/KD_3.bam
+Assigned	68354643	75020567	69148767	66431545	58564522	57923363
+Unassigned_Ambiguity	593670	695980	599709	578605	534977	593257
+Unassigned_MultiMapping	15579880	17545310	16116068	16287271	14720473	14544016
+Unassigned_NoFeatures	9115406	9627486	8745547	8924369	7573037	7884167
+Unassigned_Unmapped	0	0	0	0	0	0
+Unassigned_MappingQuality	0	0	0	0	0	0
+Unassigned_FragementLength	0	0	0	0	0	0
+Unassigned_Chimera	0	0	0	0	0	0
+Unassigned_Secondary	0	0	0	0	0	0
+Unassigned_Nonjunction	0	0	0	0	0	0
+Unassigned_Duplicate	0	0	0	0	0	0
