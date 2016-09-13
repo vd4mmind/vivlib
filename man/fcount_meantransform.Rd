@@ -8,14 +8,14 @@ fcount_meantransform(fcountOutput, samplenames, filterByCount = NULL,
   boxplot = TRUE)
 }
 \arguments{
+\item{fcountOutput}{Featurecount output in a data frame}
+
 \item{samplenames}{The name of samples (exclusing replicate ID etc). Replicates of the samples
 will be grouped together for calculating mean..}
 
 \item{filterByCount}{A value, if given it will first filter genes by raw mean expression <= given threshold.}
 
 \item{boxplot}{Logical. Draw a boxplot or normalized counts?}
-
-\item{fcoutOutput}{Featurecount output in a data frame}
 }
 \value{
 A data frame of library-normalized mean counts
@@ -24,9 +24,10 @@ A data frame of library-normalized mean counts
 Transform a featurecount output to a data frame of library-normalized mean counts
 }
 \examples{
-fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
-samples <- rep(c("cnt","KD"), each = 3)
-fcount_meantransform(fcountOutput = fc, samplenames = samples, filterByCount = 1000, boxplot = TRUE)
+fc <- system.file("extdata", "fcount_mouse.tsv", package="vivlib")
+fout <- read.delim(fc)
+samples <- c(paste0("cont_", 1:3), paste0("KD_",1:3))
+out <- fcount_meantransform(fcountOutput = fout, samplenames = samples, filterByCount = 1000, boxplot = TRUE)
 
 }
 

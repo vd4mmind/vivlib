@@ -15,7 +15,7 @@
 #' @export
 #'
 #' @examples
-#' fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
+#' fc <- system.file("extdata", "fcount_mouse.tsv", package="vivlib")
 #' DESeq_wrapper(fcountOutput = fc,numReplicates = 3, fdr = 0.01,
 #' Output = "deseq_output.tsv", pdfReport = "deseq_report.pdf")
 
@@ -120,7 +120,7 @@ DESeq_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
 #' @export
 #'
 #' @examples
-#' fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
+#' fc <- system.file("extdata", "fcount_mouse.tsv", package="vivlib")
 #' EdgeR_wrapper(fcountOutput = fc,numReplicates = 3, fdr = 0.01,
 #' Output = "edger_output.tsv", pdfReport = "edger_report.pdf")
 
@@ -209,7 +209,7 @@ EdgeR_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
 
 #' annotate the output file from Differential Expression wrapper
 #'
-#' @param DESeqOutput Tab-seperated output file from \code{\link{EdgeR_wrapper}} or \code{\link{DESeq_wrapper}}
+#' @param DEoutput Tab-seperated output file from \code{\link{EdgeR_wrapper}} or \code{\link{DESeq_wrapper}}
 #' @param Output Annotated output file name
 #' @param remote Whether use biomart to annotate file
 #' @param genome When remote = TRUE, which genome to use (available = "hg38","mm10","dm6")

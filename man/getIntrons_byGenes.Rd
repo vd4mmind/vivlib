@@ -25,10 +25,12 @@ annotated DESeq output with introns for each gene
 Get introns by genes
 }
 \examples{
-library(TxDb.Hsapiens.UCSC.hg38.knownGene)
+
+\dontrun{
+library("TxDb.Hsapiens.UCSC.hg38.knownGene")
 deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
 getIntrons_byGenes(txdb = TxDb.Hsapiens.UCSC.hg38.knownGene, seqout = deout,
 padjFilter = 0.05, genome_mart = "hsapiens_gene_ensembl", outfile = "annotated_introns.out")
-
+}
 }
 

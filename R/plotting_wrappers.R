@@ -127,7 +127,7 @@ plotVolcano <- function(DEoutput, fdr = 0.05, foldChangeLine = NULL, markGenes =
 #'
 #' @examples
 #' deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
-#' fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
+#' fc <- system.file("extdata", "fcount_mouse.tsv", package="vivlib")
 #' plotHeatmap(DEoutput = deout, fcountOutput = fc, sampleNames = rep(c("cnt","KD"), each = 3))
 #'
 

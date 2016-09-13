@@ -28,9 +28,10 @@ plot A bubbleplot in pdf format
 Make a bubblePlot for SPIA pathway output
 }
 \examples{
+\dontrun{
 deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
-spia_wrapper <- function(DEoutput = deout, organism = "mmu", outFile = "edgeR_spia.txt")
-spia_plotBubble(SPIAout = "edgeR_spia.txt", outfileName = "SPIAplots.out, top = 20, title = "SPIA plot)
-
+spia_wrapper(DEoutput = deout, organism = "mmu", outFile = "edgeR_spia.txt")
+spia_plotBubble(SPIAout = "edgeR_spia.txt", outfileName = "SPIAplots.out", top = 20, title = "SPIA plot")
+}
 }
 

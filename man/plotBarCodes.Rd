@@ -5,10 +5,8 @@
 \title{Perform ROAST and make BarCodePlot using a voom transformed output and a microarry output}
 \usage{
 plotBarCodes(GSEfile, ourVoomFile, batchAnalyse = TRUE,
-  VoomInputName = NULL,
-  humanMouseNameMap = "/data/akhtar/bhardwaj/my_annotations/Human_mouse_Gene_orthologous.txt",
-  dfCutoff = "pvalue", logFoldCh = 0, padj = 0.05,
-  outFolder = "/data/akhtar/bhardwaj/2015_OtherAnalysis/Bilal_Oncogene_paper/BarCodePlots/MPC5")
+  VoomInputName = NULL, humanMouseNameMap = NULL, dfCutoff = "pvalue",
+  logFoldCh = 0, padj = 0.05, outFolder = NULL)
 }
 \arguments{
 \item{GSEfile}{A microarry data file. Filename should start from 'GSE'.

@@ -16,7 +16,7 @@
 #' @examples
 #' bam <- system.file("extdata", "test_2L2R.bam", package="vivlib")
 #' splitBAM(bam = bam, splitby = "chr", chrnameList = NULL, flagList = NULL,
-#'              mapqList = NULL, outfile_prefix, nthreads = 20)
+#'              mapqList = NULL, outfile_prefix = "test", nthreads = 20)
 #'
 
 splitBAM <- function(bamFile, splitby = "strand", chrnameList = NULL, flagList = NULL,

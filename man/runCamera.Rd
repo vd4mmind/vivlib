@@ -21,8 +21,6 @@ tab-seperated file. The columns should be ("ensembl_gene_id","external_gene_id")
 \url{http://software.broadinstitute.org/gsea/msigdb/index.jsp}}
 
 \item{outfileName}{Output pdf file name.}
-
-\item{name}{File name to output filtering plots.}
 }
 \value{
 CAMERA result object.
@@ -33,8 +31,8 @@ A wrapper over CAMERA test.
 \examples{
 
 \dontrun{
-fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
-design <- data.frame(rownames = c(paste0("cnt_", 1:3), paste0("KD_",1:3)),
+fc <- system.file("extdata", "fcount_mouse.tsv", package="vivlib")
+design <- data.frame(row.names = c(paste0("cnt_", 1:3), paste0("KD_",1:3)),
                      condition = rep(c("cnt","KD"), each = 3) )
 
 runCamera(fcountOutput,design,bmGeneNames,name="myVoomInput",outfileName = "test")

@@ -32,7 +32,7 @@ Output file and Pdf Report of DESeq2 analysis
 A Wrapper for DESeq2 over featurecounts output
 }
 \examples{
-fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
+fc <- system.file("extdata", "fcount_mouse.tsv", package="vivlib")
 DESeq_wrapper(fcountOutput = fc,numReplicates = 3, fdr = 0.01,
 Output = "deseq_output.tsv", pdfReport = "deseq_report.pdf")
 }

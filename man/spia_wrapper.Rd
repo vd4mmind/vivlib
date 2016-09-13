@@ -26,8 +26,9 @@ a txt file and a pdf file
 A wrapper over SPIA pathway perturbation analysis for mouse and human
 }
 \examples{
+\dontrun{
 deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
 spia_wrapper <- function(DEoutput = deout, organism = "mmu", outFile = "edgeR_spia.txt")
-
+}
 }
 

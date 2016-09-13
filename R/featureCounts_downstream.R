@@ -41,7 +41,7 @@ plot_fCountSummary <- function(summaryFile, CutFromHeader, outFile = NULL){
 
 #' Transform a featurecount output to a data frame of library-normalized mean counts
 #'
-#' @param fcoutOutput Featurecount output in a data frame
+#' @param fcountOutput Featurecount output in a data frame
 #' @param samplenames The name of samples (exclusing replicate ID etc). Replicates of the samples
 #'                      will be grouped together for calculating mean..
 #' @param filterByCount A value, if given it will first filter genes by raw mean expression <= given threshold.
@@ -51,9 +51,10 @@ plot_fCountSummary <- function(summaryFile, CutFromHeader, outFile = NULL){
 #' @export
 #'
 #' @examples
-#' fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
-#' samples <- rep(c("cnt","KD"), each = 3)
-#' fcount_meantransform(fcountOutput = fc, samplenames = samples, filterByCount = 1000, boxplot = TRUE)
+#' fc <- system.file("extdata", "fcount_mouse.tsv", package="vivlib")
+#' fout <- read.delim(fc)
+#' samples <- c(paste0("cont_", 1:3), paste0("KD_",1:3))
+#' out <- fcount_meantransform(fcountOutput = fout, samplenames = samples, filterByCount = 1000, boxplot = TRUE)
 #'
 
 fcount_meantransform <- function(fcountOutput, samplenames, filterByCount = NULL, boxplot = TRUE){
@@ -72,7 +73,7 @@ fcount_meantransform <- function(fcountOutput, samplenames, filterByCount = NULL
 
         # A function to get normalized mean of replicates by sample
         mean_bysample <- function(name, df){
-                df2 <- dplyr::select(df, contains(name))
+                df2 <- dplyr::select(df, dplyr::contains(name))
                 # get library-norm counts for the df using DESeq2
                 coldata <- data.frame(row.names = colnames(df2), sample = rep(name, ncol(df2)))
                 dds <- DESeq2::DESeqDataSetFromMatrix(df2, colData = coldata,design = ~1)

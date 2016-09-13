@@ -13,9 +13,10 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
 #' spia_wrapper <- function(DEoutput = deout, organism = "mmu", outFile = "edgeR_spia.txt")
-#'
+#' }
 spia_wrapper <- function(DEoutput, organism = "mmu", padjCutoff = 0.05, outFile, outPlot = NULL){
         df <- read.table(DEoutput, sep= "\t", header = TRUE, quote = "" )
         # load corresponding lib
@@ -72,10 +73,11 @@ spia_wrapper <- function(DEoutput, organism = "mmu", padjCutoff = 0.05, outFile,
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
-#' spia_wrapper <- function(DEoutput = deout, organism = "mmu", outFile = "edgeR_spia.txt")
-#' spia_plotBubble(SPIAout = "edgeR_spia.txt", outfileName = "SPIAplots.out, top = 20, title = "SPIA plot)
-#'
+#' spia_wrapper(DEoutput = deout, organism = "mmu", outFile = "edgeR_spia.txt")
+#' spia_plotBubble(SPIAout = "edgeR_spia.txt", outfileName = "SPIAplots.out", top = 20, title = "SPIA plot")
+#' }
 
 spia_plotBubble <- function(SPIAout,outfileName = NULL, top = 20, plotType = 1, title = NULL){
         path <- read.delim(pipe(paste0("cut -f1,3,6,9,11 ",SPIAout)), header = TRUE)

@@ -6,7 +6,6 @@
 #'                      control/test or any set of factors.
 #' @param bmGeneNames Optionally provide alternative gene symbols downloaded from biomart as a
 #'                      tab-seperated file. The columns should be ("ensembl_gene_id","external_gene_id")
-#' @param name File name to output filtering plots.
 #' @param moduleFile A file with modules to test. Download from
 #'                      \url{http://software.broadinstitute.org/gsea/msigdb/index.jsp}
 #' @param outfileName Output pdf file name.
@@ -17,8 +16,8 @@
 #' @examples
 #'
 #' \dontrun{
-#' fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
-#' design <- data.frame(rownames = c(paste0("cnt_", 1:3), paste0("KD_",1:3)),
+#' fc <- system.file("extdata", "fcount_mouse.tsv", package="vivlib")
+#' design <- data.frame(row.names = c(paste0("cnt_", 1:3), paste0("KD_",1:3)),
 #'                      condition = rep(c("cnt","KD"), each = 3) )
 #'
 #' runCamera(fcountOutput,design,bmGeneNames,name="myVoomInput",outfileName = "test")
@@ -47,7 +46,7 @@ runCamera <- function(fcountOutput,design,bmGeneNames, moduleFile="msigdb.v5.0.s
         y$Gene = tolower(as.character(fcountOutputMerged$external_gene_name))
         fit <- limma::lmFit(y, design = design)
 
-        fit$df.residual <- limma::fit$df.residual - 1 # for CAMERA
+        fit$df.residual <- fit$df.residual - 1 # for CAMERA
         fit <- limma::eBayes(fit,trend = T) # for CAMERA
         fit$gene = tolower(as.character(fcountOutputMerged$external_gene_name))
         print(summary(limma::decideTests(fit)))
@@ -63,7 +62,7 @@ runCamera <- function(fcountOutput,design,bmGeneNames, moduleFile="msigdb.v5.0.s
         ldat <- lapply(ldat,tolower)
 
         # Run CAMERA and print output
-        index <- limma::symbols2indices(ldat,fit$gene,remove.empty = TRUE)
+        index <- limma::ids2indices(ldat,fit$gene,remove.empty = TRUE)
         gst <- limma::camera(index = index,y = y$E,design = design,allow.neg.cor=FALSE)
         gst <- gst[order(gst[,5],decreasing = FALSE),]
 

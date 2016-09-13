@@ -10,11 +10,13 @@
 #' @export
 #'
 #' @examples
-#' library(TxDb.Hsapiens.UCSC.hg38.knownGene)
+#'
+#' \dontrun{
+#' library("TxDb.Hsapiens.UCSC.hg38.knownGene")
 #' deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
 #' getIntrons_byGenes(txdb = TxDb.Hsapiens.UCSC.hg38.knownGene, seqout = deout,
 #' padjFilter = 0.05, genome_mart = "hsapiens_gene_ensembl", outfile = "annotated_introns.out")
-#'
+#' }
 
 getIntrons_byGenes <- function(txdb, seqout = "DESeq_outputs/XR1_annotated.out",
                                padjFilter = 0.05, genome_mart = "hsapiens_gene_ensembl", outfile){

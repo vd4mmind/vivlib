@@ -12,6 +12,8 @@ makeVoomInput(fcountOutput, design, genome = "mm10", plotFile = NULL)
 \item{design}{A data frame containing design information. rownames should correspond to columns in count file and
 column could be control/test or any set of factors.}
 
+\item{genome}{Genome of organism to fetch annotation (available : "mm10", "hg38" , "dm6")}
+
 \item{plotFile}{File name to output filtering plots (.pdf).}
 }
 \value{
@@ -21,8 +23,8 @@ A plot (as pdf) and a voom transformed output as list.
 Make Voom transformed input for BarCodePlot and ROAST test
 }
 \examples{
-fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
-design <- data.frame(rownames = c(paste0("cnt_", 1:3), paste0("KD_",1:3)),
+fc <- system.file("extdata", "fcount_mouse.tsv", package="vivlib")
+design <- data.frame(row.names = c(paste0("cnt_", 1:3), paste0("KD_",1:3)),
                      condition = rep(c("cnt","KD"), each = 3) )
 makeVoomInput(fcountOutput = fc, design = design, plotFile = "test.pdf")
 
