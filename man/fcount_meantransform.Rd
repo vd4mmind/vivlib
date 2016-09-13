@@ -26,7 +26,7 @@ Transform a featurecount output to a data frame of library-normalized mean count
 \examples{
 fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
 samples <- rep(c("cnt","KD"), each = 3)
-fcount_meantransform(fcoutOutput = fc, samplenames = samples, filterByCount = 1000, boxplot = TRUE)
+fcount_meantransform(fcountOutput = fc, samplenames = samples, filterByCount = 1000, boxplot = TRUE)
 
 }
 
