@@ -1,6 +1,6 @@
 #' A wrapper over CAMERA test.
 #'
-#' @param counts A tab-seperated file containing gene names followed by counts
+#' @param fcountOutput A tab-seperated file containing gene names followed by fcountOutput
 #' @param design  A tab-seperated file containing design information (colnames, condition).
 #'                      colnames should correspond to columns in count file and condition could be
 #'                      control/test or any set of factors.
@@ -15,37 +15,42 @@
 #' @export
 #'
 #' @examples
-#'runCamera(counts,design,bmGeneNames,name="myVoomInput",moduleFile="msigdb.v5.0.symbols.gmt")
+#'
+#' \dontrun{
+#' fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
+#' design <- data.frame(rownames = c(paste0("cnt_", 1:3), paste0("KD_",1:3)),
+#'                      condition = rep(c("cnt","KD"), each = 3) )
+#'
+#' runCamera(fcountOutput,design,bmGeneNames,name="myVoomInput",outfileName = "test")
+#' }
+#'
 #'
 
-runCamera <- function(counts,design,bmGeneNames, moduleFile="msigdb.v5.0.symbols.gmt",  outfileName){
+runCamera <- function(fcountOutput,design,bmGeneNames, moduleFile="msigdb.v5.0.symbols.gmt", outfileName){
 
-        design <- read.table(design, header=T)
-        design <- model.matrix(~ condition, design)
 
         # get count data and filter by rowmeans
-        counts <- read.table(counts, header = T, row.names = 1)
-        rownames(counts) = gsub('(ENS.*)\\.[0-9]*','\\1',rownames(counts))
-        means = rowMeans(counts)
-        counts = counts[which(means > 1),]
+        fcountOutput <- read.delim(fcountOutput, header = T, row.names = 1)
+        fcountOutput <-  fcountOutput[,c(6:ncol(fcountOutput))]
+        means = rowMeans(fcountOutput)
+        fcountOutput = fcountOutput[which(means > 1),]
+        # design matrix
+        colnames(design) <- "condition"
+        design <- model.matrix(~ condition, design)
 
         # add gene names from biomart file
-        bmGeneNames = read.table(bmGeneNames,sep="\t", header=TRUE, row.names=1)
-        matchingIds = merge(counts, bmGeneNames,
-                            by.x = 0,
-                            by.y = "ensembl_gene_id",
-                            all.x = TRUE)
-        matchingIds = matchingIds[c("Row.names","external_gene_id")]
+        ext.data <- fetch_annotation(genome)
+        fcountOutputMerged <- merge(fcountOutput, ext.data, by.x = 0, by.y = 1, all.x = TRUE, sort = FALSE)
 
         # voom transform
-        y <- voom(counts,design)
-        y$Gene = tolower(as.character(matchingIds$external_gene_id))
-        fit <- lmFit(y, design = design)
+        y <- limma::voom(fcountOutput,design)
+        y$Gene = tolower(as.character(fcountOutputMerged$external_gene_name))
+        fit <- limma::lmFit(y, design = design)
 
-        fit$df.residual <- fit$df.residual - 1 # for CAMERA
-        fit <- eBayes(fit,trend = T) # for CAMERA
-        fit$gene = tolower(as.character(matchingIds$external_gene_id))
-        print(summary(decideTests(fit)))
+        fit$df.residual <- limma::fit$df.residual - 1 # for CAMERA
+        fit <- limma::eBayes(fit,trend = T) # for CAMERA
+        fit$gene = tolower(as.character(fcountOutputMerged$external_gene_name))
+        print(summary(limma::decideTests(fit)))
 
         # read and prepare the ModuleFile
         Mods <- read.table(moduleFile,fill = TRUE, sep="\t")
@@ -58,8 +63,8 @@ runCamera <- function(counts,design,bmGeneNames, moduleFile="msigdb.v5.0.symbols
         ldat <- lapply(ldat,tolower)
 
         # Run CAMERA and print output
-        index <- symbols2indices(ldat,fit$gene,remove.empty = TRUE)
-        gst <- camera(index = index,y = y$E,design = design,allow.neg.cor=FALSE)
+        index <- limma::symbols2indices(ldat,fit$gene,remove.empty = TRUE)
+        gst <- limma::camera(index = index,y = y$E,design = design,allow.neg.cor=FALSE)
         gst <- gst[order(gst[,5],decreasing = FALSE),]
 
         print("No of Significant modules : ")
@@ -84,7 +89,9 @@ runCamera <- function(counts,design,bmGeneNames, moduleFile="msigdb.v5.0.symbols
 #'
 #' @examples
 #'
-#' Camera_plotbubble(CAMERAoutput, outfileName, top = 20, title = NULL)
+#' \dontrun{
+#' Camera_plotbubble(CAMERAoutput, outfileName = "test", top = 20, title = NULL)
+#' }
 #'
 
 Camera_plotbubble <- function(CAMERAoutput, outfileName = NULL, top = 20, title = NULL){

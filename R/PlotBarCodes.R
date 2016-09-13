@@ -16,7 +16,7 @@
 #' makeVoomInput(fcountOutput = fc, design = design, plotFile = "test.pdf")
 #'
 
-makeVoomInput <- function(fcountOutput, design, genome = "mm10", bmGeneNames,plotFile = NULL){
+makeVoomInput <- function(fcountOutput, design, genome = "mm10", plotFile = NULL){
 
         # get featurecount data
         fcountOutput <- read.delim(fcountOutput, header = T, row.names = 1)
@@ -26,12 +26,13 @@ makeVoomInput <- function(fcountOutput, design, genome = "mm10", bmGeneNames,plo
         means = rowMeans(fcountOutput)
         fcountOutput = fcountOutput[which(means > 1),]
 
-        # add gene names from biomart file
-        ext.data <- fetch_annotation(genome)
-        fcountOutputMerged <- merge(fcountOutput, ext.data, by.x = 0, by.y = 1, all.x = TRUE, sort = FALSE)
         # get design matrix for voom
         colnames(design) <- "condition"
         design <- model.matrix(~ condition, design)
+
+        # add gene names from biomart file
+        ext.data <- fetch_annotation(genome)
+        fcountOutputMerged <- merge(fcountOutput, ext.data, by.x = 0, by.y = 1, all.x = TRUE, sort = FALSE)
 
         # voom
         y <- limma::voom(fcountOutput,design)

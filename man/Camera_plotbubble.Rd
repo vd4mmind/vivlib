@@ -24,7 +24,9 @@ Make a bubble plot for CAMERA output
 }
 \examples{
 
-Camera_plotbubble(CAMERAoutput, outfileName, top = 20, title = NULL)
+\dontrun{
+Camera_plotbubble(CAMERAoutput, outfileName = "test", top = 20, title = NULL)
+}
 
 }
 

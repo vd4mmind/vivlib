@@ -4,11 +4,11 @@
 \alias{runCamera}
 \title{A wrapper over CAMERA test.}
 \usage{
-runCamera(counts, design, bmGeneNames, moduleFile = "msigdb.v5.0.symbols.gmt",
-  outfileName)
+runCamera(fcountOutput, design, bmGeneNames,
+  moduleFile = "msigdb.v5.0.symbols.gmt", outfileName)
 }
 \arguments{
-\item{counts}{A tab-seperated file containing gene names followed by counts}
+\item{fcountOutput}{A tab-seperated file containing gene names followed by fcountOutput}
 
 \item{design}{A tab-seperated file containing design information (colnames, condition).
 colnames should correspond to columns in count file and condition could be
@@ -31,7 +31,15 @@ CAMERA result object.
 A wrapper over CAMERA test.
 }
 \examples{
-runCamera(counts,design,bmGeneNames,name="myVoomInput",moduleFile="msigdb.v5.0.symbols.gmt")
+
+\dontrun{
+fc <- system.file("extdata", "fcount_mouse.out", package="vivlib")
+design <- data.frame(rownames = c(paste0("cnt_", 1:3), paste0("KD_",1:3)),
+                     condition = rep(c("cnt","KD"), each = 3) )
+
+runCamera(fcountOutput,design,bmGeneNames,name="myVoomInput",outfileName = "test")
+}
+
 
 }
 

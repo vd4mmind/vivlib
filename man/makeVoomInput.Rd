@@ -4,8 +4,7 @@
 \alias{makeVoomInput}
 \title{Make Voom transformed input for BarCodePlot and ROAST test}
 \usage{
-makeVoomInput(fcountOutput, design, genome = "mm10", bmGeneNames,
-  plotFile = NULL)
+makeVoomInput(fcountOutput, design, genome = "mm10", plotFile = NULL)
 }
 \arguments{
 \item{fcountOutput}{A featurecounts output file}
