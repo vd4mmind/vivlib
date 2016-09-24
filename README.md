@@ -4,7 +4,7 @@ vivlib
 
 *by @vivekbhr*
 
-[![Build Status](https://travis-ci.org/vivekbhr/vivlib.svg?branch=master)](https://travis-ci.org/vivekbhr/vivlib)
+[![Build Status](https://travis-ci.org/vivekbhr/vivlib.svg?branch=master)](https://travis-ci.org/vivekbhr/vivlib) [![DOI](https://zenodo.org/badge/51520252.svg)](https://zenodo.org/badge/latestdoi/51520252)
 
 ## Useful functions and wrappers around RNAseq analysis
 
