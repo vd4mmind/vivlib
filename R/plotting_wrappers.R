@@ -163,6 +163,15 @@ plotHeatmap <- function(DEoutput, fdr = 0.05, fcountOutput, sampleNames, topNgen
         fcout <- scale(fcout)
         hr <- dist(as.matrix(fcout), method = clusterMethod)
 
+        # set breaks
+        paletteLength <- 100
+        colors <- colorRampPalette(rev(RColorBrewer::brewer.pal(n = 5, name = "RdBu")))(paletteLength)
+        # set breaks to get white to zero
+        myBreaks <- c(seq(min(fcout), 0,
+                          length.out=ceiling(paletteLength/2) + 1),
+                      seq(max(fcout)/paletteLength, max(fcout),
+                          length.out=floor(paletteLength/2)))
+
         # use gene names
         if(useGeneNames){
                 rowlab = deseqRes$external_gene_name
