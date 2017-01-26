@@ -2,10 +2,10 @@
 % Please edit documentation in R/plotting_wrappers.R
 \name{plotHeatmap}
 \alias{plotHeatmap}
-\title{Plot heatmap of raw counts for top DEgenes using edgeR/DESeq2 output}
+\title{Plot heatmap of counts for top DEgenes using edgeR/DESeq2 output}
 \usage{
 plotHeatmap(DEoutput, fdr = 0.05, fcountOutput, sampleNames,
-  topNgenes = 100, clusterbyCorr = FALSE, useGeneNames = TRUE,
+  topNgenes = 100, clusterMethod = "euclidean", useGeneNames = TRUE,
   markGenes = NULL, outFile = NA)
 }
 \arguments{
@@ -20,7 +20,7 @@ plotHeatmap(DEoutput, fdr = 0.05, fcountOutput, sampleNames,
 
 \item{topNgenes}{How many genes to plot. Type NULL for all genes (might take long time)}
 
-\item{clusterbyCorr}{Whether to cluster row/columns by correlations. Default is eucledian distances.}
+\item{clusterMethod}{Define clusterig method for the Rows (genes). All valid arguments for \code{dist} are valid.}
 
 \item{useGeneNames}{Use gene names to plot instead of default geneIDs. only works if the input
 has been annotated by \code{\link{annotate_DEoutput}} function.}
@@ -33,7 +33,7 @@ has been annotated by \code{\link{annotate_DEoutput}} function.}
 A heatmap.
 }
 \description{
-Plot heatmap of raw counts for top DEgenes using edgeR/DESeq2 output
+Plot heatmap of counts for top DEgenes using edgeR/DESeq2 output
 }
 \examples{
 deout <- system.file("extdata", "edgeR_output_annotated.tsv", package="vivlib")
