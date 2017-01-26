@@ -20,7 +20,8 @@ plotHeatmap(DEoutput, fdr = 0.05, fcountOutput, sampleNames,
 
 \item{topNgenes}{How many genes to plot. Type NULL for all genes (might take long time)}
 
-\item{clusterMethod}{Define clusterig method for the Rows (genes). All valid arguments for \code{dist} are valid.}
+\item{clusterMethod}{Define clusterig method for the Rows (genes). All valid arguments for \code{dist} are valid.
+Set this to NULL to simply sort the genes by Fold Change}
 
 \item{useGeneNames}{Use gene names to plot instead of default geneIDs. only works if the input
 has been annotated by \code{\link{annotate_DEoutput}} function.}

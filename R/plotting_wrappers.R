@@ -117,6 +117,7 @@ plotVolcano <- function(DEoutput, fdr = 0.05, foldChangeLine = NULL, markGenes =
 #' @param sampleNames samplenames for heatmap column label (must be the same order as in featurecounts file)
 #' @param topNgenes How many genes to plot. Type NULL for all genes (might take long time)
 #' @param clusterMethod Define clusterig method for the Rows (genes). All valid arguments for \code{dist} are valid.
+#'                      Set this to NULL to simply sort the genes by Fold Change
 #' @param useGeneNames Use gene names to plot instead of default geneIDs. only works if the input
 #'                      has been annotated by \code{\link{annotate_DEoutput}} function.
 #' @param markGenes Genes to mark in bold on heatmap.
@@ -197,7 +198,9 @@ plotHeatmap <- function(DEoutput, fdr = 0.05, fcountOutput, sampleNames, topNgen
                 rowlab = deseqRes$external_gene_name
         } else rowlab = NULL
 
-        pheatmap::pheatmap(fcout, clustering_distance_rows = hr, scale = "none",breaks = myBreaks,
+        clust <- ifelse(is.null(clusterMethod), FALSE, TRUE)
+
+        pheatmap::pheatmap(fcout,cluster_rows = clust, clustering_distance_rows = hr, scale = "none",breaks = myBreaks,
                            clustering_distance_cols = "euclidean", labels_row = rowlab,fontsize_row = 5,
                            main = sprintf("Raw counts: Top %d DE genes",topNgenes), filename = outFile)
         # splitting clusters (not implemented)
