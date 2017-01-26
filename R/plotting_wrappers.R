@@ -202,8 +202,9 @@ plotHeatmap <- function(DEoutput, fdr = 0.05, fcountOutput, sampleNames, topNgen
                 rowlab = deseqRes$external_gene_name
         } else rowlab = NULL
 
-        pheatmap::pheatmap(fcout,cluster_rows = clust, clustering_distance_rows = hr, scale = "none",breaks = myBreaks,
+        pheatmap::pheatmap(fcout,cluster_rows = clust, clustering_distance_rows = hr, scale = "none",
                            clustering_distance_cols = "euclidean", labels_row = rowlab,fontsize_row = 5,
+                           breaks = myBreaks, color = colors,
                            main = sprintf("Raw counts: Top %d DE genes",topNgenes), filename = outFile)
         # splitting clusters (not implemented)
         if(!is.null(markGenes)) print("marking genes not implemented yet!")
