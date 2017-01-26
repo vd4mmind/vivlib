@@ -182,7 +182,13 @@ plotHeatmap <- function(DEoutput, fdr = 0.05, fcountOutput, sampleNames, topNgen
 
         ## make heatmap (with scaling)
         fcout <- scale(fcout)
-        hr <- dist(as.matrix(fcout), method = clusterMethod)
+        if(is.null(clusterMethod)) {
+                clust <- FALSE
+                hr <- NA
+        } else {
+                clust <- TRUE
+                hr <- dist(as.matrix(fcout), method = clusterMethod)
+        }
 
         # set breaks
         paletteLength <- 100
@@ -197,8 +203,6 @@ plotHeatmap <- function(DEoutput, fdr = 0.05, fcountOutput, sampleNames, topNgen
         if(useGeneNames){
                 rowlab = deseqRes$external_gene_name
         } else rowlab = NULL
-
-        clust <- ifelse(is.null(clusterMethod), FALSE, TRUE)
 
         pheatmap::pheatmap(fcout,cluster_rows = clust, clustering_distance_rows = hr, scale = "none",breaks = myBreaks,
                            clustering_distance_cols = "euclidean", labels_row = rowlab,fontsize_row = 5,
