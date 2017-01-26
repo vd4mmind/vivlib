@@ -6,7 +6,7 @@
 \usage{
 plotHeatmap(DEoutput, fdr = 0.05, fcountOutput, sampleNames,
   topNgenes = 100, clusterMethod = "euclidean", useGeneNames = TRUE,
-  markGenes = NULL, outFile = NA)
+  markGenes = NULL, libNorm = FALSE, logNorm = FALSE, outFile = NA)
 }
 \arguments{
 \item{DEoutput}{A tab-seperated edgeR/DESeq2 output file, using \code{\link{EdgeR_wrapper}} or
@@ -26,6 +26,10 @@ plotHeatmap(DEoutput, fdr = 0.05, fcountOutput, sampleNames,
 has been annotated by \code{\link{annotate_DEoutput}} function.}
 
 \item{markGenes}{Genes to mark in bold on heatmap.}
+
+\item{libNorm}{whether to Normalize by library size of samples (default = FALSE)}
+
+\item{logNorm}{whether to use log2 counts of samples (default = FALSE)}
 
 \item{outFile}{File name to save the output. NULL prints heatmap on screen.}
 }

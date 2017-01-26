@@ -120,6 +120,9 @@ plotVolcano <- function(DEoutput, fdr = 0.05, foldChangeLine = NULL, markGenes =
 #' @param useGeneNames Use gene names to plot instead of default geneIDs. only works if the input
 #'                      has been annotated by \code{\link{annotate_DEoutput}} function.
 #' @param markGenes Genes to mark in bold on heatmap.
+#' @param libNorm whether to Normalize by library size of samples (default = FALSE)
+#'
+#' @param logNorm whether to use log2 counts of samples (default = FALSE)
 #' @param outFile File name to save the output. NULL prints heatmap on screen.
 #'
 #' @return A heatmap.
@@ -133,7 +136,7 @@ plotVolcano <- function(DEoutput, fdr = 0.05, foldChangeLine = NULL, markGenes =
 
 plotHeatmap <- function(DEoutput, fdr = 0.05, fcountOutput, sampleNames, topNgenes = 100,
                         clusterMethod = "euclidean", useGeneNames = TRUE, markGenes = NULL,
-                        outFile = NA) {
+                        libNorm = FALSE, logNorm = FALSE, outFile = NA) {
 
         ## read the data and subset it
         deseqRes <- read.delim(DEoutput,header = TRUE)
@@ -147,11 +150,25 @@ plotHeatmap <- function(DEoutput, fdr = 0.05, fcountOutput, sampleNames, topNgen
         ## read featurecount output
         fcout <- read.delim(fcountOutput,skip = 1, header = TRUE, row.names = 1)
         fcout <- fcout[,6:ncol(fcout)]
+
         # first normalize by lib size
-        coldata <- data.frame(row.names = colnames(fcout), sample = sampleNames)
-        dds <- DESeq2::DESeqDataSetFromMatrix(fcout, colData = coldata,design = ~1)
-        dds <- DESeq2::estimateSizeFactors(dds)
-        fcout <- DESeq2::counts(dds,normalized=TRUE)
+        if(isTRUE(libNorm)) {
+                print("Normalizing by library size")
+                coldata <- data.frame(row.names = colnames(fcout), sample = sampleNames)
+                dds <- DESeq2::DESeqDataSetFromMatrix(fcout, colData = coldata,design = ~1)
+                dds <- DESeq2::estimateSizeFactors(dds)
+                fcout <- DESeq2::counts(dds,normalized=TRUE)
+        } else {
+                print("Taking raw counts")
+        }
+
+        if(isTRUE(logNorm)) {
+                print("Plotting scaled log counts.")
+                # take log
+                fcout <- log(fcout + 1)
+        } else {
+                print("Plotting scaled raw counts")
+        }
 
         # subset fcountoutput taking only DEgenes
         fcout <- fcout[which(rownames(fcout) %in% deseqRes$Row.names), ]
