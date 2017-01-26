@@ -143,15 +143,18 @@ EdgeR_wrapper <- function(fcountOutput,numReplicates = 4, fdr = 0.01, Output = "
 
         if(col_order == 1) {
                 colnames(input) <- c(paste0("Control_",1:numReplicates_cont),paste0("KD_",1:numReplicates_test))
+                condition <- c(rep("Cnt", numReplicates_cont), rep("KD", numReplicates_test) )
         } else {
                 colnames(input) <- c(paste0("KD_",1:numReplicates_test),paste0("Control_",1:numReplicates_cont))
+                condition <- c(rep("KD", numReplicates_test), rep("Cnt", numReplicates_cont) )
         }
 
         # edgeR
         samples <- data.frame(row.names = colnames(input),
-                              condition = rep(c("Cnt","KD"),each = numReplicates))
+                              condition = condition)
+
         design <- model.matrix(~samples$condition)
-        y <- edgeR::DGEList(counts = input,samples = samples, group = samples$condition, remove.zeros = TRUE)
+        y <- edgeR::DGEList(counts = input, group = samples$condition, remove.zeros = TRUE)
         y <- edgeR::calcNormFactors(y)
         y <- edgeR::estimateDisp(y, design)
         print("Using QLF test")
