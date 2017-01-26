@@ -21,3 +21,26 @@ fetch_annotation <- function(genome) {
                                    mart = ensembl)
         return(ext.data)
 }
+
+
+
+#' A function to get normalized mean of replicates by sample
+#'
+#' @param name name of sample (from the given df)
+#' @param df A data frame of counts
+#'
+#' @return data frame
+#'
+
+mean_bysample <- function(name, df){
+        df2 <- dplyr::select(df, dplyr::contains(name))
+        # get library-norm counts for the df using DESeq2
+        coldata <- data.frame(row.names = colnames(df2), sample = rep(name, ncol(df2)))
+        dds <- DESeq2::DESeqDataSetFromMatrix(df2, colData = coldata,design = ~1)
+        dds <- DESeq2::estimateSizeFactors(dds)
+        df2 <- DESeq2::counts(dds,normalized=TRUE)
+
+        # return rowmeans
+        rmeans <- rowMeans(df2)
+        return(rmeans)
+}

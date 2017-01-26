@@ -108,7 +108,7 @@ plotVolcano <- function(DEoutput, fdr = 0.05, foldChangeLine = NULL, markGenes =
 
 
 
-#' Plot heatmap of raw counts for top DEgenes using edgeR/DESeq2 output
+#' Plot heatmap of counts for top DEgenes using edgeR/DESeq2 output
 #'
 #' @param DEoutput A tab-seperated edgeR/DESeq2 output file, using \code{\link{EdgeR_wrapper}} or
 #'                      \code{\link{DESeq_wrapper}}
@@ -116,7 +116,7 @@ plotVolcano <- function(DEoutput, fdr = 0.05, foldChangeLine = NULL, markGenes =
 #' @param fcountOutput Featurecounts output (for raw counts)
 #' @param sampleNames samplenames for heatmap column label (must be the same order as in featurecounts file)
 #' @param topNgenes How many genes to plot. Type NULL for all genes (might take long time)
-#' @param clusterbyCorr Whether to cluster row/columns by correlations. Default is eucledian distances.
+#' @param clusterMethod Define clusterig method for the Rows (genes). All valid arguments for \code{dist} are valid.
 #' @param useGeneNames Use gene names to plot instead of default geneIDs. only works if the input
 #'                      has been annotated by \code{\link{annotate_DEoutput}} function.
 #' @param markGenes Genes to mark in bold on heatmap.
@@ -132,7 +132,7 @@ plotVolcano <- function(DEoutput, fdr = 0.05, foldChangeLine = NULL, markGenes =
 #'
 
 plotHeatmap <- function(DEoutput, fdr = 0.05, fcountOutput, sampleNames, topNgenes = 100,
-                        clusterbyCorr = FALSE, useGeneNames = TRUE, markGenes = NULL,
+                        clusterMethod = "euclidean", useGeneNames = TRUE, markGenes = NULL,
                         outFile = NA) {
 
         ## read the data and subset it
@@ -144,30 +144,32 @@ plotHeatmap <- function(DEoutput, fdr = 0.05, fcountOutput, sampleNames, topNgen
                 deseqRes <- deseqRes[1:topNgenes,]
         }
 
-        ## read and subset fcountoutput
+        ## read featurecount output
         fcout <- read.delim(fcountOutput,skip = 1, header = TRUE, row.names = 1)
-        fcout <- fcout[which(rownames(fcout) %in% deseqRes$Row.names), 6:ncol(fcout)]
+        fcout <- fcout[,6:ncol(fcout)]
+        # first normalize by lib size
+        coldata <- data.frame(row.names = colnames(fcout), sample = sampleNames)
+        dds <- DESeq2::DESeqDataSetFromMatrix(fcout, colData = coldata,design = ~1)
+        dds <- DESeq2::estimateSizeFactors(dds)
+        fcout <- DESeq2::counts(dds,normalized=TRUE)
+
+        # subset fcountoutput taking only DEgenes
+        fcout <- fcout[which(rownames(fcout) %in% deseqRes$Row.names), ]
         fcout <- fcout[order(deseqRes$padj),]
         colnames(fcout) <- sampleNames
 
-        ## make heatmap
-        # NOTE : Scaling is not done before clustering, therefore the output looks shitty!
 
-        # cluster rows by pearson and cols by spearman
-        if(clusterbyCorr){
-                hr <- as.dist(1-cor(t(as.matrix(fcout)), method="pearson"))
-                hc <- as.dist(1-cor(as.matrix(fcout), method="spearman"))
-        } else {
-                hr <- "euclidean"
-                hc <- "euclidean"
-        }
+        ## make heatmap (with scaling)
+        fcout <- scale(fcout)
+        hr <- dist(as.matrix(fcout), method = clusterMethod)
+
         # use gene names
         if(useGeneNames){
                 rowlab = deseqRes$external_gene_name
         } else rowlab = NULL
 
-        pheatmap::pheatmap(fcout, clustering_distance_rows = hr,
-                           clustering_distance_cols = hc, labels_row = rowlab,fontsize_row = 5,
+        pheatmap::pheatmap(fcout, clustering_distance_rows = hr, scale = "none",breaks = myBreaks,
+                           clustering_distance_cols = "euclidean", labels_row = rowlab,fontsize_row = 5,
                            main = sprintf("Raw counts: Top %d DE genes",topNgenes), filename = outFile)
         # splitting clusters (not implemented)
         if(!is.null(markGenes)) print("marking genes not implemented yet!")
