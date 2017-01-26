@@ -172,11 +172,9 @@ plotHeatmap <- function(DEoutput, fdr = 0.05, fcountOutput, sampleNames, topNgen
         }
 
         # subset fcountoutput taking only DEgenes
-        fcout <- fcout[which(rownames(fcout) %in% deseqRes$Row.names), ]
-        deseqRes <- deseqRes[deseqRes$Row.names %in% rownames(fcout),]
-        # then sort by logFC
         deseqRes <- deseqRes[order(deseqRes$log2FoldChange),]
-        fcout <- fcout[order(deseqRes$log2FoldChange),]
+        fcout <- fcout[as.character(deseqRes$Row.names),]
+        # then sort by logFC
         colnames(fcout) <- sampleNames
 
 
