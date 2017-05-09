@@ -218,7 +218,7 @@ plotDEgeneOverlap <- function(DEoutList, sampleNames, FDRcutoff = 0.05, outFile 
         UpSetR::upset(dedata2,sets = colnames(dedata2),number.angles = 30, point.size = 5,
                       text.scale = 2, line.size = 2, ...)
 
-        if(is.na(dedata3)) {
+        if(!is.na(dedata3)) {
                 # plot dedata2 (intersections of fold Change of genes which are significant in all samples)
                 UpSetR::upset(dedata3,sets = colnames(dedata3),number.angles = 30, point.size = 5,
                               text.scale = 2, line.size = 2, ...)
