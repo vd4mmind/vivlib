@@ -4,7 +4,8 @@
 \alias{plotDEgeneOverlap}
 \title{plot intersections of list of DE genes from multiple DESeq2 outputs}
 \usage{
-plotDEgeneOverlap(DEoutList, sampleNames, FDRcutoff = 0.05, outFile = NULL)
+plotDEgeneOverlap(DEoutList, sampleNames, FDRcutoff = 0.05, outFile = NULL,
+  returnData = FALSE, ...)
 }
 \arguments{
 \item{DEoutList}{A vector, with names of DESeq2 output files to use.}
@@ -14,6 +15,10 @@ plotDEgeneOverlap(DEoutList, sampleNames, FDRcutoff = 0.05, outFile = NULL)
 \item{FDRcutoff}{FDR cutoff to select DE genes from the list}
 
 \item{outFile}{Name of output pdf file. If NULL, prints output on the screen}
+
+\item{returnData}{Return the UpSet-formatted data}
+
+\item{...}{Additional parameters passed to the function `upSet`}
 }
 \value{
 A plot of Intersection of gene sets.

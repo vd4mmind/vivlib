@@ -149,6 +149,8 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
 #' @param sampleNames Name of samples corresponding to the DESeq output file list.
 #' @param FDRcutoff FDR cutoff to select DE genes from the list
 #' @param outFile Name of output pdf file. If NULL, prints output on the screen
+#' @param returnData Return the UpSet-formatted data
+#' @param ... Additional parameters passed to the function `upSet`
 #'
 #' @return A plot of Intersection of gene sets.
 #' @export
@@ -158,7 +160,7 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
 #' plotDEgeneOverlap(DEoutList, sampleNames, FDRcutoff = 0.05, outFile = NULL)
 #' }
 
-plotDEgeneOverlap <- function(DEoutList, sampleNames, FDRcutoff = 0.05, outFile = NULL){
+plotDEgeneOverlap <- function(DEoutList, sampleNames, FDRcutoff = 0.05, outFile = NULL, returnData = FALSE, ...){
         dedata <- lapply(DEoutList, function(x){
                 read.delim(pipe(paste0("cut -f1,3,7 ",x)),stringsAsFactors = FALSE)
         })
@@ -207,11 +209,18 @@ plotDEgeneOverlap <- function(DEoutList, sampleNames, FDRcutoff = 0.05, outFile 
         if(!is.null(outFile)) pdf(outFile, width = 10, height = 6)
         # plot dedata2 (intersections of genes significant)
         UpSetR::upset(dedata2,sets = colnames(dedata2),number.angles = 30, point.size = 5,
-                      text.scale = 16, line.size = 2)
+                      text.scale = 16, line.size = 2, ...)
         # plot dedata2 (intersections of fold Change of genes which are significant in all samples)
         UpSetR::upset(dedata3,sets = colnames(dedata3),number.angles = 30, point.size = 5,
-                      text.scale = 16, line.size = 2)
+                      text.scale = 16, line.size = 2, ...)
         if(!is.null(outFile)) dev.off()
 
+        # return data
+        if(isTRUE(returnData)) {
+                return(list(de_data = dedata2,
+                            logFC_data = dedata3))
+        } else {
+                return(NULL)
+        }
 
 }
