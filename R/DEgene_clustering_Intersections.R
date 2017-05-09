@@ -32,7 +32,7 @@
 #' }
 
 clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "correlation",
-                           cut_cluster = NA, row_annotation = NULL, keepNAs = TRUE, outFile_prefix = NULL) {
+                            cut_cluster = NA, row_annotation = NULL, keepNAs = TRUE, outFile_prefix = NULL) {
         # Read files
         dedata <- lapply(DEoutList, function(x){
                 read.delim(pipe(paste0("cut -f1,3,7 ",x)),stringsAsFactors = FALSE)
@@ -65,29 +65,29 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
         ## compute distance
 
         if(method == "correlation") {
-                hr <- as.dist(1 - cor(t(as.matrix(dedata)), method = "spearman"))
-                hc <- as.dist(1 - cor(as.matrix(dedata), method = "spearman"))
+                hr <- as.dist(1 - cor(scale(t(as.matrix(dedata))), method = "pearson"))
+                hc <- as.dist(1 - cor(scale(as.matrix(dedata)), method = "spearman"))
                 k <- NA
         } else if(method == "bicluster") {
                 print("Biclustering not implemented yet")
         } else if(method == "kmeans") {
-        	    warning("Choosing kmeans! You won't get genes splitted by clusters..")
-        	    hr <- "euclidean"
+                warning("Choosing kmeans! You won't get genes splitted by clusters..")
+                hr <- "euclidean"
                 hc <- "euclidean"
                 k <- cut_cluster
 
         } else {
 
-                hr <- dist(as.matrix(dedata), method = method)
-                hc <- dist(t(as.matrix(dedata)), method = method)
+                hr <- dist(scale(as.matrix(dedata)), method = method)
+                hc <- NA #dist(scale(t(as.matrix(dedata))), method = method)
                 k <- NA
         }
 
         # make row annotation
         if(!is.null(row_annotation)){
-        	rowannot <- row_annotation[which(rownames(row_annotation) %in% rownames(dedata)),]
+                rowannot <- row_annotation[which(rownames(row_annotation) %in% rownames(dedata)),]
         } else {
-        	rowannot <- NA
+                rowannot <- NA
         }
 
         ## plot clusters
@@ -114,23 +114,24 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
 
         ## sort genes as per cluster
         if(class(hr) == "dist"){
-        	message("Sorting genes as per clusters.")
-        	hr.h <- hclust(hr)
-        	hc.h <- hclust(hc)
-        	sortedRes <- dedata[hr.h$labels[hr.h$order],hc.h$labels[hc.h$order]]
+                message("Sorting genes as per clusters.")
+                hr.h <- hclust(hr)
+                #hc.h <- hclust(hc)
+                sortedRes <- dedata[hr.h$labels[hr.h$order],]
+                                    #hc.h$labels[hc.h$order]]
         }
 
         ## cut clusters
 
         if(!is.na(cut_cluster)) {
-        	message(paste0("Cutting tree into ",cut_cluster," clusters"))
+                message(paste0("Cutting tree into ",cut_cluster," clusters"))
                 cluscut <- dendextend::cutree(hclust(hr), k = cut_cluster, order_clusters_as_data = FALSE)
 
                 declusters <- lapply(seq(1:cut_cluster), function(i){
                         clust_ids <- names(cluscut[cluscut == i])
                         return(rownames(dedata[clust_ids,]))
                 })
-                names(declusters) <- paste0("Cluster_",seq(1:cut_cluster))
+                names(declusters) <- paste0("Cluster_",seq_len(cut_cluster))
                 declusters <- plyr::ldply(declusters, data.frame)
                 colnames(declusters) <- c("Cluster_ID","GeneID")
                 write.table(declusters, file = paste0(outFile_prefix,"_clusters.txt"),
@@ -140,7 +141,6 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
         }
         save(dedata,sortedRes, hr, hc, file = paste0(outFile_prefix,"_clustering.Rdata") )
 }
-
 
 
 #' plot intersections of list of DE genes from multiple DESeq2 outputs
