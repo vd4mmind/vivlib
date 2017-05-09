@@ -204,13 +204,13 @@ plotDEgeneOverlap <- function(DEoutList, sampleNames, FDRcutoff = 0.05, outFile 
         dedata3[dedata3 > 0 ] <- 1
         dedata3[dedata3 < 0] <- 0
 
-        if(!is.null(outFile)) pdf(outFile,width=1200,height = 1000)
+        if(!is.null(outFile)) pdf(outFile, width = 10, height = 6)
         # plot dedata2 (intersections of genes significant)
         UpSetR::upset(dedata2,sets = colnames(dedata2),number.angles = 30, point.size = 5,
-                      name.size = 16, line.size = 2)
+                      text.scale = 16, line.size = 2)
         # plot dedata2 (intersections of fold Change of genes which are significant in all samples)
         UpSetR::upset(dedata3,sets = colnames(dedata3),number.angles = 30, point.size = 5,
-                      name.size = 16, line.size = 2)
+                      text.scale = 16, line.size = 2)
         if(!is.null(outFile)) dev.off()
 
 
