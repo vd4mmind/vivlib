@@ -192,27 +192,38 @@ plotDEgeneOverlap <- function(DEoutList, sampleNames, FDRcutoff = 0.05, outFile 
         dedata3 <- dedata3[apply(df, 1, sum) == ncol(df), ]
         rownames(dedata3) <- rownames(dedata2)
         dedata3 <- na.omit(dedata3)
+        # could happen that there are no genes left in dedata3 now
+        if(nrow(dedata3) == 0) {
+                # spit out the warning
+                warning(paste0("No significant genes are common between samples. Can't plot fold Changes."))
+                dedata3 <- NA
 
-        # spit out the number of genes for the second plot
-        message(paste0("Plotting intersection of direction of fold Changes : ",nrow(dedata3),
-                       " genes considered (significant in ALL of the samples)"))
+        } else {
+                # spit out the number of genes for the second plot
+                message(paste0("Plotting intersection of direction of fold Changes : ",nrow(dedata3),
+                               " genes considered (significant in ALL of the samples)"))
+                # format dedata3 (all pvalue < cutoff = category 1, pvalue > cutoff = category 0)
+                dedata3[dedata3 > 0 ] <- 1
+                dedata3[dedata3 < 0] <- 0
+        }
 
         # format dedata2 (all pvalue < cutoff = category 1, pvalue > cutoff = category 0)
         dedata2[df] <- 1
         dedata2[dedata2 < 1] <- 0
         dedata2[is.na(dedata2)] <- 0
 
-        # format dedata3 (all pvalue < cutoff = category 1, pvalue > cutoff = category 0)
-        dedata3[dedata3 > 0 ] <- 1
-        dedata3[dedata3 < 0] <- 0
-
         if(!is.null(outFile)) pdf(outFile, width = 10, height = 6)
+
         # plot dedata2 (intersections of genes significant)
         UpSetR::upset(dedata2,sets = colnames(dedata2),number.angles = 30, point.size = 5,
                       text.scale = 2, line.size = 2, ...)
-        # plot dedata2 (intersections of fold Change of genes which are significant in all samples)
-        UpSetR::upset(dedata3,sets = colnames(dedata3),number.angles = 30, point.size = 5,
-                      text.scale = 2, line.size = 2, ...)
+
+        if(nrow(dedata3) != 0) {
+                # plot dedata2 (intersections of fold Change of genes which are significant in all samples)
+                UpSetR::upset(dedata3,sets = colnames(dedata3),number.angles = 30, point.size = 5,
+                              text.scale = 2, line.size = 2, ...)
+        }
+
         if(!is.null(outFile)) dev.off()
 
         # return data
