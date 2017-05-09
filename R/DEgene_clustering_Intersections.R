@@ -165,25 +165,52 @@ plotDEgeneOverlap <- function(DEoutList, sampleNames, FDRcutoff = 0.05, outFile 
         names(dedata) <- sampleNames
         # take cutoff and rename columns by sample
         dedata <- mapply(function(x,y){
-                x <- x[which(x[,3] < FDRcutoff),c(1,3)]
-                colnames(x) <- c("GeneID",y)
+                x <- x[which(x[,3] < FDRcutoff),c(1,2,3)]
+                colnames(x) <- c("GeneID",paste(y, c("logFC","padj"), sep = "_" ) )
                 return(x)
         },dedata, sampleNames,SIMPLIFY = FALSE)
 
         # merge all DE genes
         dedata <- Reduce(function(x,y) merge(x, y, by = "GeneID", all.x = TRUE, all.y = TRUE), dedata)
         dedata <- unique(dedata)
+        # spit out the number of genes
+        message(paste0("Plotting intersection of significant genes : ",nrow(dedata),
+                       " genes considered (significant in ANY of the samples)"))
+
         # get in format for plot
         rownames(dedata) <- dedata$GeneID
-        dedata <- dedata[2:length(dedata)]
-        dedata[dedata < FDRcutoff] <- 1
-        dedata[dedata < 1] <- 0
-        dedata[is.na(dedata)] <- 0
+        dedata <- dedata[2:ncol(dedata)]
+
+        # dedata2 contains only pvalues for 1st upsetplot
+        dedata2 <- dplyr::select(dedata, dplyr::contains("padj"))
+
+        # dedata3 contains logFC for genes with pvalue < cutoff in all samples
+        df <- dedata2 < FDRcutoff
+        dedata3 <- dplyr::select(dedata, dplyr::contains("logFC"))
+        dedata3 <- dedata3[apply(df, 1, sum) == ncol(df), ]
+        rownames(dedata3) <- rownames(dedata2)
+        dedata3 <- na.omit(dedata3)
+
+        # spit out the number of genes for the second plot
+        message(paste0("Plotting intersection of direction of fold Changes : ",nrow(dedata3),
+                       " genes considered (significant in ALL of the samples)"))
+
+        # format dedata2 (all pvalue < cutoff = category 1, pvalue > cutoff = category 0)
+        dedata2[df] <- 1
+        dedata2[dedata2 < 1] <- 0
+        dedata2[is.na(dedata2)] <- 0
+
+        # format dedata3 (all pvalue < cutoff = category 1, pvalue > cutoff = category 0)
+        dedata3[dedata3 > 0 ] <- 1
+        dedata3[dedata3 < 0] <- 0
 
         if(!is.null(outFile)) pdf(outFile,width=1200,height = 1000)
-        UpSetR::upset(dedata,sets = colnames(dedata),number.angles = 30, point.size = 5,
-              name.size = 16, line.size = 2)
-
+        # plot dedata2 (intersections of genes significant)
+        UpSetR::upset(dedata2,sets = colnames(dedata2),number.angles = 30, point.size = 5,
+                      name.size = 16, line.size = 2)
+        # plot dedata2 (intersections of fold Change of genes which are significant in all samples)
+        UpSetR::upset(dedata3,sets = colnames(dedata3),number.angles = 30, point.size = 5,
+                      name.size = 16, line.size = 2)
         if(!is.null(outFile)) dev.off()
 
 
