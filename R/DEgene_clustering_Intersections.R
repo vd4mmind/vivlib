@@ -162,7 +162,7 @@ clusterDEgenes <- function(DEoutList, sampleNames, FDRcutoff = 0.05, method = "c
 
 plotDEgeneOverlap <- function(DEoutList, sampleNames, FDRcutoff = 0.05, outFile = NULL, returnData = FALSE, ...){
         dedata <- lapply(DEoutList, function(x){
-                read.delim(pipe(paste0("cut -f1,3,7 ",x)),stringsAsFactors = FALSE)
+                read.delim(x,stringsAsFactors = FALSE)[,c("Row.names","log2FoldChange","padj")]
         })
         names(dedata) <- sampleNames
         # take cutoff and rename columns by sample
